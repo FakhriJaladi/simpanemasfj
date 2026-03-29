@@ -1119,8 +1119,10 @@ function floor2(num){
       const remitNet = Math.floor((remitGross - remitChargeRM) * 100) / 100;
       const ewalletGross = inputVal * ewalletRate;
       const ewalletNet = Math.floor(ewalletGross * 100) / 100;
-      const remitGram = remitNet / gapPrice;
-      const ewalletGram = ewalletNet / gapPrice;
+      const remitNetWhole = Math.floor(remitNet);
+      const ewalletNetWhole = Math.floor(ewalletNet);
+      const remitGram = remitNetWhole / gapPrice;
+      const ewalletGram = ewalletNetWhole / gapPrice;
 
       document.getElementById('cr-highlight-label').textContent = 'RM Bersih';
       document.getElementById('cr-net').textContent = 'RM ' + Math.floor(remitNet).toLocaleString('en-MY');
@@ -1141,7 +1143,7 @@ function floor2(num){
       document.getElementById('ce-rm-label').textContent = 'RM Sebelum Caj';
 
       const remitWins = remitNet >= ewalletNet;
-      const diffRM = Math.abs(remitNet - ewalletNet);
+      const diffRM = Math.abs(remitNetWhole - ewalletNetWhole);
       const diffGram = Math.abs(remitGram - ewalletGram);
 
       document.getElementById('cRemitBlock').classList.toggle('winner', remitWins);
