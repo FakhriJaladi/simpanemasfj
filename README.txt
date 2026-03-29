@@ -28,3 +28,7 @@ WHAT YOU STILL EDIT MANUALLY
 - premium fee
 
 The RM live prices and GAP price come from Public Gold.
+
+
+FIX APPLIED
+- api/prices.js now fetches from the Public Gold live price page instead of the homepage.
