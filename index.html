@@ -985,9 +985,12 @@ function floor2(num){
   function applyLiveData(data) {
     if (!data) return;
 
-    if (data.lastUpdated) {
-      SETTINGS.lastUpdate = data.lastUpdated;
-      PG_DATA.lastUpdate = data.lastUpdated;
+    if (data.liveTimestamp) {
+      SETTINGS.lastUpdate = data.liveTimestamp;
+      PG_DATA.lastUpdate = data.liveTimestamp;
+    } else if (data.gapDate) {
+      SETTINGS.lastUpdate = data.gapDate;
+      PG_DATA.lastUpdate = data.gapDate;
     }
 
     if (data.gap && data.gap.pricePerGram) {

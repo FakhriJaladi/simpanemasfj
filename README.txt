@@ -36,3 +36,6 @@ FIX IN THIS VERSION
 
 
 This package keeps the clean GAP section (1g / RM100 / RM300 / RM500), clickable disclaimer, and Public Gold update text display.
+
+
+This version shows Dikemaskini using Public Gold live timestamp when available, otherwise falls back to GAP date.
