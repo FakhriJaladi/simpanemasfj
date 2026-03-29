@@ -16,6 +16,7 @@ export default async function handler(req, res) {
     const html = await response.text();
     const text = html.replace(/\s+/g, " ").trim();
 
+    const liveTimestampMatch = text.match(/\(Last Update ([^)]+)\)\s*Public Gold Price \(24 Hours Live\)/i);
     const gapDateMatch = text.match(/GOLD ACCUMULATION PROGRAM \(24K\).*?\(Last updated ([^)]+)\)/i);
     const rm100Match = text.match(/RM\s*100\s*=\s*([0-9.]+)\s*gram/i);
     const gapPriceMatch = text.match(/RM\s*([0-9,]+)\s*=\s*1\.0000\s*gram/i);
@@ -34,20 +35,20 @@ export default async function handler(req, res) {
         buy: Number(m[3].replace(/,/g, ""))
       }));
 
-    const payload = {
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
+
+    res.status(200).json({
       source: "publicgold.com.my",
-      lastUpdated: gapDateMatch ? gapDateMatch[1].trim() : null,
+      liveTimestamp: liveTimestampMatch ? liveTimestampMatch[1].trim() : null,
+      gapDate: gapDateMatch ? gapDateMatch[1].trim() : null,
       gap: {
         rm100Gram: rm100Match ? Number(rm100Match[1]) : null,
         pricePerGram: gapPriceMatch ? Number(gapPriceMatch[1].replace(/,/g, "")) : null
       },
       bars: barMatches,
       dinars: dinarMatches
-    };
-
-    res.setHeader("Content-Type", "application/json");
-    res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
-    res.status(200).json(payload);
+    });
   } catch (error) {
     res.status(500).json({
       error: "Failed to fetch live prices",
