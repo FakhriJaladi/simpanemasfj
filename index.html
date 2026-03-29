@@ -1171,15 +1171,12 @@ function floor2(num){
 
   function renderPrices() {
     const gapPrice = PG_DATA.pricePerGram.sell;
-    const GAP_PRICE_PLACEHOLDER = gapPrice.toFixed(2);
-    const GAP_BND_PLACEHOLDER = fmtBND(toBND(gapPrice));
     const d = PG_DATA;
 
-    let html = `
+    let html = ``;
+    const gapBnd = fmtBND(toBND(gapPrice));
 
-      <!-- GAP -->
-      const gapBnd = fmtBND(toBND(gapPrice));
-      html += `
+    html += `
       <div class="section fadein"><div class="section-title">✦ Gold Accumulation Program (GAP)</div></div>
       <div class="gap-card fadein">
         <div class="gap-showcase">
@@ -1192,7 +1189,7 @@ function floor2(num){
           <div class="gap-stat-grid">
             <div class="gap-stat-card">
               <div class="gap-stat-label">Harga GAP Semasa</div>
-              <div class="gap-stat-value">RM ${GAP_PRICE_PLACEHOLDER}</div>
+              <div class="gap-stat-value">RM ${gapPrice.toFixed(2)}</div>
               <div class="gap-stat-note">≈ ${gapBnd} BND · harga semasa per gram</div>
             </div>
             <div class="gap-stat-card">
@@ -1203,32 +1200,31 @@ function floor2(num){
           </div>
 
           <div class="gap-convert">
-      `;
+    `;
 
-      d.gap.forEach(g => {
-        const rmAmount = parseFloat(g.label.replace('RM ', ''));
-        const bnd = toBND(rmAmount);
-        html += `
-          <div class="gap-convert-card">
-            <div class="gap-convert-label">${g.label}</div>
-            <div class="gap-convert-gram">${g.gram.toFixed(4)} g</div>
-            <div class="gap-convert-bnd">≈ ${fmtBND(bnd)} BND</div>
-          </div>
-        `;
-      });
-
-      // extra quick reference cards
-      [300, 500].forEach(amount => {
-        html += `
-          <div class="gap-convert-card">
-            <div class="gap-convert-label">RM ${amount}</div>
-            <div class="gap-convert-gram">${(amount / gapPrice).toFixed(4)} g</div>
-            <div class="gap-convert-bnd">≈ ${fmtBND(toBND(amount))} BND</div>
-          </div>
-        `;
-      });
-
+    d.gap.forEach(g => {
+      const rmAmount = parseFloat(g.label.replace('RM ', ''));
+      const bnd = toBND(rmAmount);
       html += `
+        <div class="gap-convert-card">
+          <div class="gap-convert-label">${g.label}</div>
+          <div class="gap-convert-gram">${g.gram.toFixed(4)} g</div>
+          <div class="gap-convert-bnd">≈ ${fmtBND(bnd)} BND</div>
+        </div>
+      `;
+    });
+
+    [300, 500].forEach(amount => {
+      html += `
+        <div class="gap-convert-card">
+          <div class="gap-convert-label">RM ${amount}</div>
+          <div class="gap-convert-gram">${(amount / gapPrice).toFixed(4)} g</div>
+          <div class="gap-convert-bnd">≈ ${fmtBND(toBND(amount))} BND</div>
+        </div>
+      `;
+    });
+
+    html += `
           </div>
         </div>
       </div>
@@ -1237,74 +1233,74 @@ function floor2(num){
         <div class="product-panel">
           <div class="section"><div class="section-title nice"><span>✦ Gold Bar 24K</span><span>Live Table</span></div></div>
           <div class="table-wrap">
-      `;
+    `;
 
-      d.bars.forEach(b => {
-        const totalSell = b.sell + b.ship + b.prem;
-        html += `
-          <div class="price-row fadein">
-            <div class="price-row-top">
-              <div class="weight-badge">${b.weight}</div>
-              <div>
-                <div class="price-col-label">PG Jual</div>
-                <div class="price-rm sell">${fmtRM(b.sell)}</div>
-                <div class="price-bnd">≈ <b>${fmtBND(toBND(b.sell))}</b> BND</div>
-              </div>
-              <div>
-                <div class="price-col-label">Beli Balik</div>
-                <div class="price-rm buy">${fmtRM(b.buy)}</div>
-                <div class="price-bnd">≈ <b>${fmtBND(toBND(b.buy))}</b> BND</div>
-              </div>
+    d.bars.forEach(b => {
+      const totalSell = b.sell + b.ship + b.prem;
+      html += `
+        <div class="price-row fadein">
+          <div class="price-row-top">
+            <div class="weight-badge">${b.weight}</div>
+            <div>
+              <div class="price-col-label">PG Jual</div>
+              <div class="price-rm sell">${fmtRM(b.sell)}</div>
+              <div class="price-bnd">≈ <b>${fmtBND(toBND(b.sell))}</b> BND</div>
             </div>
-            <div class="price-row-fees">
-              <div class="fee-chip ship">🚚 Shipping <span>${b.ship > 0 ? '+' + fmtRM(b.ship) : '—'}</span></div>
-              <div class="fee-chip prem">⭐ Premium SS <span>+${fmtRM(b.prem)}</span></div>
-              <div class="fee-chip" style="border-color:#3a2a50;">💰 Total Jual <span style="color:#d4a8f0;">≈ ${fmtBND(toBND(totalSell))} BND</span></div>
+            <div>
+              <div class="price-col-label">Beli Balik</div>
+              <div class="price-rm buy">${fmtRM(b.buy)}</div>
+              <div class="price-bnd">≈ <b>${fmtBND(toBND(b.buy))}</b> BND</div>
             </div>
           </div>
-        `;
-      });
+          <div class="price-row-fees">
+            <div class="fee-chip ship">🚚 Shipping <span>${b.ship > 0 ? '+' + fmtRM(b.ship) : '—'}</span></div>
+            <div class="fee-chip prem">⭐ Premium SS <span>+${fmtRM(b.prem)}</span></div>
+            <div class="fee-chip" style="border-color:#3a2a50;">💰 Total Jual <span style="color:#d4a8f0;">≈ ${fmtBND(toBND(totalSell))} BND</span></div>
+          </div>
+        </div>
+      `;
+    });
 
-      html += `
+    html += `
           </div>
         </div>
 
         <div class="product-panel">
           <div class="section"><div class="section-title nice"><span>✦ Gold Dinar Wafer 24K</span><span>Live Table</span></div></div>
           <div class="table-wrap">
-      `;
+    `;
 
-      d.dinars.forEach(b => {
-        const totalSell = b.sell + b.ship + b.prem;
-        html += `
-          <div class="price-row fadein">
-            <div class="price-row-top">
-              <div class="weight-badge" style="font-size:11px;">${b.weight}</div>
-              <div>
-                <div class="price-col-label">PG Jual</div>
-                <div class="price-rm sell">${fmtRM(b.sell)}</div>
-                <div class="price-bnd">≈ <b>${fmtBND(toBND(b.sell))}</b> BND</div>
-              </div>
-              <div>
-                <div class="price-col-label">Beli Balik</div>
-                <div class="price-rm buy">${fmtRM(b.buy)}</div>
-                <div class="price-bnd">≈ <b>${fmtBND(toBND(b.buy))}</b> BND</div>
-              </div>
+    d.dinars.forEach(b => {
+      const totalSell = b.sell + b.ship + b.prem;
+      html += `
+        <div class="price-row fadein">
+          <div class="price-row-top">
+            <div class="weight-badge" style="font-size:11px;">${b.weight}</div>
+            <div>
+              <div class="price-col-label">PG Jual</div>
+              <div class="price-rm sell">${fmtRM(b.sell)}</div>
+              <div class="price-bnd">≈ <b>${fmtBND(toBND(b.sell))}</b> BND</div>
             </div>
-            <div class="price-row-fees">
-              <div class="fee-chip ship">🚚 Shipping <span>${b.ship > 0 ? '+' + fmtRM(b.ship) : '—'}</span></div>
-              <div class="fee-chip prem">⭐ Premium SS <span>+${fmtRM(b.prem)}</span></div>
-              <div class="fee-chip" style="border-color:#3a2a50;">💰 Total Jual <span style="color:#d4a8f0;">≈ ${fmtBND(toBND(totalSell))} BND</span></div>
+            <div>
+              <div class="price-col-label">Beli Balik</div>
+              <div class="price-rm buy">${fmtRM(b.buy)}</div>
+              <div class="price-bnd">≈ <b>${fmtBND(toBND(b.buy))}</b> BND</div>
             </div>
           </div>
-        `;
-      });
+          <div class="price-row-fees">
+            <div class="fee-chip ship">🚚 Shipping <span>${b.ship > 0 ? '+' + fmtRM(b.ship) : '—'}</span></div>
+            <div class="fee-chip prem">⭐ Premium SS <span>+${fmtRM(b.prem)}</span></div>
+            <div class="fee-chip" style="border-color:#3a2a50;">💰 Total Jual <span style="color:#d4a8f0;">≈ ${fmtBND(toBND(totalSell))} BND</span></div>
+          </div>
+        </div>
+      `;
+    });
 
-      html += `
+    html += `
           </div>
         </div>
       </div>
-      `;
+    `;
 
     document.getElementById('mainContent').innerHTML = html;
     document.getElementById('remitRateDisplay').textContent = CONFIG.remitRate.toFixed(3);
