@@ -1,8 +1,11 @@
 export default async function handler(req, res) {
   try {
-    const response = await fetch("https://publicgold.com.my/", {
+    const url =
+      "https://publicgold.com.my/index.php?Itemid=53&id=1534&option=com_content&task=view";
+
+    const response = await fetch(url, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; FakhriPriceBot/1.0)"
+        "User-Agent": "Mozilla/5.0"
       }
     });
 
@@ -33,7 +36,7 @@ export default async function handler(req, res) {
 
     const payload = {
       source: "publicgold.com.my",
-      lastUpdated: gapDateMatch ? gapDateMatch[1] : null,
+      lastUpdated: gapDateMatch ? gapDateMatch[1].trim() : null,
       gap: {
         rm100Gram: rm100Match ? Number(rm100Match[1]) : null,
         pricePerGram: gapPriceMatch ? Number(gapPriceMatch[1].replace(/,/g, "")) : null
