@@ -680,7 +680,7 @@
   <div class="header">
     <div class="tag">Simpan Emas Fakhri Jaladi</div>
     <h1>Harga Emas<br/><em>Hari Ini</em></h1>
-    <p class="last-updated">Sumber: publicgold.com.my · <span id="updateTime">—</span></p>
+    <p class="last-updated">Sumber: <a href="https://www.publicgold.com.my" target="_blank" rel="noopener noreferrer">publicgold.com.my</a> · Dikemaskini: <span id="updateTime">—</span></p>
     <p class="last-updated" id="liveStatus" style="margin-top:4px;">Sedang ambil harga live…</p>
   </div>
 
@@ -719,10 +719,9 @@
   </div>
 
   <div class="disclaimer">
-    Harga dalam RM adalah dari publicgold.com.my.<br/>
+    Harga dalam RM adalah dari <a href="https://www.publicgold.com.my" target="_blank" rel="noopener noreferrer">publicgold.com.my</a>.<br/>
     Harga BND dikira berdasarkan kadar penukaran yang dipilih.<br/>
-    Harga boleh berubah pada bila-bila masa. Semak kadar terkini sebelum transaksi.<br/>
-    Harga live cuba diambil automatik dari publicgold.com.my. Jika gagal, sistem akan guna fallback price.
+    Harga boleh berubah pada bila-bila masa. Semak kadar terkini sebelum transaksi.
   </div>
 </div>
 
@@ -913,7 +912,7 @@ function floor2(num){
   }
 
   function loadPrices() {
-    document.getElementById('updateTime').textContent = 'Dikemaskini: ' + PG_DATA.lastUpdate;
+    document.getElementById('updateTime').textContent = PG_DATA.lastUpdate || '—';
     renderPrices();
   }
 
