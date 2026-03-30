@@ -23,8 +23,20 @@ export default async function handler(req, res) {
       .replace(/\s+/g, " ")
       .trim();
 
-    const liveTimestampMatch = text.match(/\(Last Update\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4}\s+[0-9:]+)\)\s*Public Gold Price \(24 Hours Live\)/i);
-    const gapDateMatch = text.match(/GOLD ACCUMULATION PROGRAM \(24K\)([\s\S]*?)\(Last updated\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4})\)/i);
+    const numberify = (value) => Number(String(value).replace(/,/g, ""));
+
+    // IMPORTANT:
+    // Public Gold page contains many duplicated old "Last Update" strings.
+    // We collect ALL matches and use the last one, which is the current live timestamp.
+    const liveTimestampMatches = [...text.matchAll(/\(Last Update\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4}\s+[0-9:]+)\)\s*Public Gold Price \(24 Hours Live\)/gi)];
+    const liveTimestamp = liveTimestampMatches.length
+      ? liveTimestampMatches[liveTimestampMatches.length - 1][1].trim()
+      : null;
+
+    const gapDateMatches = [...text.matchAll(/GOLD ACCUMULATION PROGRAM \(24K\)([\s\S]*?)\(Last updated\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4})\)/gi)];
+    const gapDate = gapDateMatches.length
+      ? gapDateMatches[gapDateMatches.length - 1][2].trim()
+      : null;
 
     const rm100Match = text.match(/RM\s*100\s*=\s*([0-9.]+)\s*gram/i);
     const gapPriceMatch = text.match(/RM\s*([0-9,]+)\s*=\s*1\.0000\s*gram/i);
@@ -34,8 +46,6 @@ export default async function handler(req, res) {
 
     const dinarSectionMatch = text.match(/GOLD WAFER - DINAR \(24k\)([\s\S]*?)PG Jewel/i);
     const dinarSection = dinarSectionMatch ? dinarSectionMatch[1] : "";
-
-    const numberify = (value) => Number(String(value).replace(/,/g, ""));
 
     const barPattern = /(5|10|20|50|100|250|1000)\s*gram\s*([0-9,]{3,10})\s*([0-9,]{3,10})/gi;
     const bars = [...goldBarSection.matchAll(barPattern)].map(m => ({
@@ -56,8 +66,8 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       source: "publicgold.com.my",
-      liveTimestamp: liveTimestampMatch ? liveTimestampMatch[1].trim() : null,
-      gapDate: gapDateMatch ? gapDateMatch[2].trim() : null,
+      liveTimestamp,
+      gapDate,
       gap: {
         rm100Gram: rm100Match ? Number(rm100Match[1]) : null,
         pricePerGram: gapPriceMatch ? numberify(gapPriceMatch[1]) : null
@@ -65,6 +75,7 @@ export default async function handler(req, res) {
       bars,
       dinars
     });
+
   } catch (error) {
     res.status(500).json({
       error: "Failed to fetch live prices",
