@@ -24,25 +24,60 @@ export default async function handler(req, res) {
 
     const numberify = (value) => Number(String(value).replace(/,/g, ""));
 
-    // LIVE TIMESTAMP: page contains duplicated old timestamps, so take the LAST match
-    const liveTimestampMatches = [
-      ...text.matchAll(/\(Last Update\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4}\s+[0-9:]+)\)\s*Public Gold Price \(24 Hours Live\)/gi)
-    ];
-    const liveTimestamp = liveTimestampMatches.length
-      ? liveTimestampMatches[liveTimestampMatches.length - 1][1].trim()
-      : null;
+    // Pick the LATEST timestamp on the page, not the first one.
+    const monthMap = {
+      jan: 0, january: 0,
+      feb: 1, february: 1,
+      mar: 2, march: 2,
+      apr: 3, april: 3,
+      may: 4,
+      jun: 5, june: 5,
+      jul: 6, july: 6,
+      aug: 7, august: 7,
+      sep: 8, sept: 8, september: 8,
+      oct: 9, october: 9,
+      nov: 10, november: 10,
+      dec: 11, december: 11
+    };
 
-    // GAP: match globally and take LAST match so it follows the latest Public Gold entry
+    function parsePgTimestamp(ts) {
+      const m = String(ts).match(/^(\d{1,2})-([A-Za-z]+)-(\d{4})\s+(\d{1,2}):(\d{2}):(\d{2})$/);
+      if (!m) return null;
+      const day = Number(m[1]);
+      const month = monthMap[m[2].toLowerCase()];
+      const year = Number(m[3]);
+      const hour = Number(m[4]);
+      const minute = Number(m[5]);
+      const second = Number(m[6]);
+      if (month === undefined) return null;
+      return new Date(year, month, day, hour, minute, second);
+    }
+
+    const liveTimestampMatches = [
+      ...text.matchAll(/Last Update\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4}\s+[0-9:]{8})/gi)
+    ].map(m => m[1].trim());
+
+    let liveTimestamp = null;
+    let latestDate = null;
+    for (const ts of liveTimestampMatches) {
+      const dt = parsePgTimestamp(ts);
+      if (dt && (!latestDate || dt > latestDate)) {
+        latestDate = dt;
+        liveTimestamp = ts;
+      }
+    }
+
+    // GAP: take latest visible match from whole page
     const rm100Matches = [...text.matchAll(/RM\s*100\s*=\s*([0-9.]+)\s*gram/gi)];
     const gapPriceMatches = [...text.matchAll(/RM\s*([0-9,]{3,})\s*=\s*1\.0000\s*gram/gi)];
-    const gapDateMatches = [...text.matchAll(/GOLD ACCUMULATION PROGRAM \(24K\)[\s\S]*?\(Last updated\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4})\)/gi)];
+    const gapDateMatches = [...text.matchAll(/GOLD ACCUMULATION PROGRAM\s*\(24K\)[\s\S]*?\(Last updated\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4})\)/gi)];
 
     const rm100Gram = rm100Matches.length ? Number(rm100Matches[rm100Matches.length - 1][1]) : null;
     const gapPrice = gapPriceMatches.length ? numberify(gapPriceMatches[gapPriceMatches.length - 1][1]) : null;
     const gapDate = gapDateMatches.length ? gapDateMatches[gapDateMatches.length - 1][1].trim() : null;
 
     // GOLD BAR section only
-    const goldBarSectionMatch = text.match(/GOLD BAR \(24K\)([\s\S]*?)GOLD WAFER\s*-\s*DINAR \(24k\)/i);
+    const goldBarSectionMatch = text.match(/GOLD BAR\s*\(24K\)([\s\S]*?)GOLD WAFER\s*-\s*DINAR\s*\(24k\)/i);
     const goldBarSection = goldBarSectionMatch ? goldBarSectionMatch[1] : "";
 
     const barPattern = /(5|10|20|50|100|250|1000)\s*gram\s*([0-9,]{3,10})\s*([0-9,]{3,10})/gi;
@@ -57,7 +92,7 @@ export default async function handler(req, res) {
     const bars = Array.from(barMap.values());
 
     // DINAR section only
-    const dinarSectionMatch = text.match(/GOLD WAFER\s*-\s*DINAR \(24k\)([\s\S]*?)(PG Jewel|Silver 999|Silver Bar|$)/i);
+    const dinarSectionMatch = text.match(/GOLD WAFER\s*-\s*DINAR\s*\(24k\)([\s\S]*?)(PG Jewel|Silver 999|Silver Bar|$)/i);
     const dinarSection = dinarSectionMatch ? dinarSectionMatch[1] : "";
 
     const dinarPattern = /(1|5|10)\s*Dinar\s*([0-9,]{3,10})\s*([0-9,]{3,10})/gi;
