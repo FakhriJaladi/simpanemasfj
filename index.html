@@ -808,7 +808,6 @@
         <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#6a5a30;margin-bottom:6px;">RM yang diperlukan</div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#E8C97A;" id="gramRmRM">—</div>
         <div style="font-size:11px;color:#6a6050;margin-top:3px;" id="gramRmNote">—</div>
-        <div style="font-size:11px;color:#b9ae93;margin-top:6px;" id="gramRmBnd">—</div>
       </div>
       <button class="btn-gold" onclick="calcGramToRM()" style="margin-bottom:12px;">Kira RM Diperlukan →</button>
       <div class="divider"></div>
@@ -1041,7 +1040,13 @@ function floor2(num){
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       applyLiveData(data);
+      if (!data.gap || !data.gap.pricePerGram || !data.gap.rm100Gram) {
+      setLiveStatus('Harga live diambil, tapi data GAP tidak lengkap.', false);
+    } else if ((!data.bars || !data.bars.length) || (!data.dinars || !data.dinars.length)) {
+      setLiveStatus('Harga live diambil, tapi jadual Gold Bar / Dinar tidak lengkap.', false);
+    } else {
       setLiveStatus('Harga live berjaya diambil dari Public Gold.');
+    }
     } catch (err) {
       console.error('Live price fetch failed:', err);
       setLiveStatus('Harga live gagal diambil. Paparan guna fallback price.', false);
@@ -1289,28 +1294,14 @@ function floor2(num){
 
   function calcGramToRM() {
     const gram = parseFloat(document.getElementById('calcTargetGram').value);
+    if (!gram || gram <= 0) { alert('Masukkan jumlah gram yang sah.'); return; }
     const gapPrice = PG_DATA.pricePerGram.sell;
-    const remitRate = parseFloat(document.getElementById('cRemitRate').value) || CONFIG.remitRate;
-    const ewalletRate = parseFloat(document.getElementById('cEwalletRate').value) || CONFIG.ewalletRate;
-    const remitCharge = parseFloat(document.getElementById('cRemitCharge').value) || CONFIG.remitCharge;
-
-    if (!gram || gram <= 0 || !gapPrice || gapPrice <= 0) {
-      alert('Sila masukkan jumlah gram yang sah.');
-      return;
-    }
-
-    const rmExact = gram * gapPrice;
-    const rmRoundedUp = Math.ceil(rmExact);
-
-    const remitBnd = (rmRoundedUp / remitRate) + remitCharge;
-    const ewalletBnd = rmRoundedUp / ewalletRate;
-
-    const bestMethod = remitBnd <= ewalletBnd ? 'Remittance' : 'E-Wallet';
-    const bestBnd = remitBnd <= ewalletBnd ? remitBnd : ewalletBnd;
-
-    document.getElementById('gramRmRM').textContent = 'RM ' + rmRoundedUp.toLocaleString('en-MY');
-    document.getElementById('gramRmNote').textContent = `${gram.toFixed(4)} g × RM ${gapPrice.toFixed(2)}`;
-    document.getElementById('gramRmBnd').textContent = `Anggaran ${bestMethod}: ${fmtBNDc(bestBnd)}`;
+    const rmNeeded = gram * gapPrice;
+    const remitBND = (rmNeeded / CONFIG.remitRate) + CONFIG.remitCharge;
+    const ewalletBND = rmNeeded / CONFIG.ewalletRate;
+    document.getElementById('gramRmRM').textContent = 'RM ' + rmNeeded.toFixed(2) + ' · @ RM' + gapPrice + '/g';
+    document.getElementById('gramRmNote').textContent =
+      '🏦 Remittance: $ ' + remitBND.toFixed(2) + ' BND  |  📱 E-Wallet: $ ' + ewalletBND.toFixed(2) + ' BND';
     document.getElementById('gramRmResult').style.display = 'block';
   }
 
