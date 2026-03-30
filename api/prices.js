@@ -1,7 +1,6 @@
 export default async function handler(req, res) {
   try {
-    const url =
-      "https://publicgold.com.my/index.php?Itemid=53&id=1534&option=com_content&task=view";
+    const url = "https://publicgold.com.my/index.php?Itemid=53&id=1534&option=com_content&task=view";
 
     const response = await fetch(url, {
       headers: {
@@ -19,13 +18,13 @@ export default async function handler(req, res) {
       .replace(/<script[\s\S]*?<\/script>/gi, " ")
       .replace(/<style[\s\S]*?<\/style>/gi, " ")
       .replace(/<[^>]+>/g, " ")
-      .replace(/&nbsp;/g, " ")
+      .replace(/&nbsp;/gi, " ")
       .replace(/\s+/g, " ")
       .trim();
 
     const numberify = (value) => Number(String(value).replace(/,/g, ""));
 
-    // Use the LAST live timestamp match because the page contains older duplicate entries.
+    // LIVE TIMESTAMP: page contains duplicated old timestamps, so take the LAST match
     const liveTimestampMatches = [
       ...text.matchAll(/\(Last Update\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4}\s+[0-9:]+)\)\s*Public Gold Price \(24 Hours Live\)/gi)
     ];
@@ -33,35 +32,44 @@ export default async function handler(req, res) {
       ? liveTimestampMatches[liveTimestampMatches.length - 1][1].trim()
       : null;
 
-    // GAP section only
-    const gapSectionMatch = text.match(/GOLD ACCUMULATION PROGRAM \(24K\)([\s\S]*?)GOLD BAR \(24K\)/i);
-    const gapSection = gapSectionMatch ? gapSectionMatch[1] : "";
+    // GAP: match globally and take LAST match so it follows the latest Public Gold entry
+    const rm100Matches = [...text.matchAll(/RM\s*100\s*=\s*([0-9.]+)\s*gram/gi)];
+    const gapPriceMatches = [...text.matchAll(/RM\s*([0-9,]{3,})\s*=\s*1\.0000\s*gram/gi)];
+    const gapDateMatches = [...text.matchAll(/GOLD ACCUMULATION PROGRAM \(24K\)[\s\S]*?\(Last updated\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4})\)/gi)];
 
-    const gapDateMatch = gapSection.match(/\(Last updated\s+([0-9]{1,2}-[A-Za-z]+-[0-9]{4})\)/i);
-    const rm100Match = gapSection.match(/RM\s*100\s*=\s*([0-9.]+)\s*gram/i);
-    const gapPriceMatch = gapSection.match(/RM\s*([0-9,]+)\s*=\s*1\.0000\s*gram/i);
+    const rm100Gram = rm100Matches.length ? Number(rm100Matches[rm100Matches.length - 1][1]) : null;
+    const gapPrice = gapPriceMatches.length ? numberify(gapPriceMatches[gapPriceMatches.length - 1][1]) : null;
+    const gapDate = gapDateMatches.length ? gapDateMatches[gapDateMatches.length - 1][1].trim() : null;
 
-    // Gold Bar section only
-    const goldBarSectionMatch = text.match(/GOLD BAR \(24K\)([\s\S]*?)GOLD WAFER - DINAR \(24k\)/i);
+    // GOLD BAR section only
+    const goldBarSectionMatch = text.match(/GOLD BAR \(24K\)([\s\S]*?)GOLD WAFER\s*-\s*DINAR \(24k\)/i);
     const goldBarSection = goldBarSectionMatch ? goldBarSectionMatch[1] : "";
 
     const barPattern = /(5|10|20|50|100|250|1000)\s*gram\s*([0-9,]{3,10})\s*([0-9,]{3,10})/gi;
-    const bars = [...goldBarSection.matchAll(barPattern)].map(m => ({
-      weight: `${m[1]}g`,
-      sell: numberify(m[2]),
-      buy: numberify(m[3])
-    }));
+    const barMap = new Map();
+    for (const m of goldBarSection.matchAll(barPattern)) {
+      barMap.set(`${m[1]}g`, {
+        weight: `${m[1]}g`,
+        sell: numberify(m[2]),
+        buy: numberify(m[3])
+      });
+    }
+    const bars = Array.from(barMap.values());
 
-    // Dinar section only
-    const dinarSectionMatch = text.match(/GOLD WAFER - DINAR \(24k\)([\s\S]*?)PG Jewel/i);
+    // DINAR section only
+    const dinarSectionMatch = text.match(/GOLD WAFER\s*-\s*DINAR \(24k\)([\s\S]*?)(PG Jewel|Silver 999|Silver Bar|$)/i);
     const dinarSection = dinarSectionMatch ? dinarSectionMatch[1] : "";
 
     const dinarPattern = /(1|5|10)\s*Dinar\s*([0-9,]{3,10})\s*([0-9,]{3,10})/gi;
-    const dinars = [...dinarSection.matchAll(dinarPattern)].map(m => ({
-      weight: `${m[1]} dinar`,
-      sell: numberify(m[2]),
-      buy: numberify(m[3])
-    }));
+    const dinarMap = new Map();
+    for (const m of dinarSection.matchAll(dinarPattern)) {
+      dinarMap.set(`${m[1]} dinar`, {
+        weight: `${m[1]} dinar`,
+        sell: numberify(m[2]),
+        buy: numberify(m[3])
+      });
+    }
+    const dinars = Array.from(dinarMap.values());
 
     res.setHeader("Content-Type", "application/json");
     res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=120");
@@ -69,10 +77,10 @@ export default async function handler(req, res) {
     res.status(200).json({
       source: "publicgold.com.my",
       liveTimestamp,
-      gapDate: gapDateMatch ? gapDateMatch[1].trim() : null,
+      gapDate,
       gap: {
-        rm100Gram: rm100Match ? Number(rm100Match[1]) : null,
-        pricePerGram: gapPriceMatch ? numberify(gapPriceMatch[1]) : null
+        rm100Gram,
+        pricePerGram: gapPrice
       },
       bars,
       dinars
