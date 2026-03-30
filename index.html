@@ -799,6 +799,18 @@
       </div>
       <div class="field"><label>Caj Remittance (BND$)</label><input type="number" id="cRemitCharge" step="0.01" value="2"/></div>
       <div class="divider"></div>
+      <div class="calc-card-title">🪙 Target Simpanan GAP</div>
+      <div class="field">
+        <label>Berapa gram mau disimpan?</label>
+        <input type="number" id="calcTargetGram" placeholder="Contoh: 0.5" step="0.0001" min="0.0001"/>
+      </div>
+      <div id="gramRmResult" style="display:none;background:#1a1810;border:1px solid #3a3020;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#6a5a30;margin-bottom:6px;">RM yang diperlukan</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#E8C97A;" id="gramRmRM">—</div>
+        <div style="font-size:11px;color:#6a6050;margin-top:3px;" id="gramRmNote">—</div>
+      </div>
+      <button class="btn-gold" onclick="calcGramToRM()" style="margin-bottom:12px;">Kira RM Diperlukan →</button>
+      <div class="divider"></div>
       <div class="calc-card-title">💰 Bajet</div>
       <div class="currency-toggle">
         <button class="currency-btn active" id="cBtnBND" onclick="setCurrency('BND')">$ BND</button>
@@ -1111,11 +1123,10 @@ function floor2(num){
             <div>
               <div class="price-col-label">Beli Balik</div>
               <div class="price-rm buy">${fmtRM(b.buy)}</div>
-              <div class="price-bnd">≈ <b>${fmtBND(toBND(b.buy))}</b> BND</div>
             </div>
           </div>
           <div class="price-row-fees">
-            <div class="fee-chip ship">🚚 Shipping <span>${b.ship > 0 ? '+' + fmtRM(b.ship) : '—'}</span></div>
+            ${b.ship > 0 ? `<div class="fee-chip ship">🚚 Shipping <span>+${fmtRM(b.ship)}</span></div>` : `<div class="fee-chip ship" style="border-color:#3a4030;"><span style="color:#7a9a70;">🚚 By Appointment</span></div>`}
             <div class="fee-chip prem">⭐ Premium SS <span>+${fmtRM(b.prem)}</span></div>
             <div class="fee-chip" style="border-color:#3a2a50;">💰 Total Jual <span style="color:#d4a8f0;">≈ ${fmtBND(toBND(totalSell))} BND</span></div>
           </div>
@@ -1146,11 +1157,10 @@ function floor2(num){
             <div>
               <div class="price-col-label">Beli Balik</div>
               <div class="price-rm buy">${fmtRM(b.buy)}</div>
-              <div class="price-bnd">≈ <b>${fmtBND(toBND(b.buy))}</b> BND</div>
             </div>
           </div>
           <div class="price-row-fees">
-            <div class="fee-chip ship">🚚 Shipping <span>${b.ship > 0 ? '+' + fmtRM(b.ship) : '—'}</span></div>
+            ${b.ship > 0 ? `<div class="fee-chip ship">🚚 Shipping <span>+${fmtRM(b.ship)}</span></div>` : `<div class="fee-chip ship" style="border-color:#3a4030;"><span style="color:#7a9a70;">🚚 By Appointment</span></div>`}
             <div class="fee-chip prem">⭐ Premium SS <span>+${fmtRM(b.prem)}</span></div>
             <div class="fee-chip" style="border-color:#3a2a50;">💰 Total Jual <span style="color:#d4a8f0;">≈ ${fmtBND(toBND(totalSell))} BND</span></div>
           </div>
@@ -1272,6 +1282,19 @@ function floor2(num){
     document.getElementById('calcInputCard').style.display = 'block';
     document.getElementById('calcResult').classList.add('visible');
     document.getElementById('calcResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function calcGramToRM() {
+    const gram = parseFloat(document.getElementById('calcTargetGram').value);
+    if (!gram || gram <= 0) { alert('Masukkan jumlah gram yang sah.'); return; }
+    const gapPrice = PG_DATA.pricePerGram.sell;
+    const rmNeeded = gram * gapPrice;
+    const remitBND = (rmNeeded / CONFIG.remitRate) + CONFIG.remitCharge;
+    const ewalletBND = rmNeeded / CONFIG.ewalletRate;
+    document.getElementById('gramRmRM').textContent = 'RM ' + rmNeeded.toFixed(2) + ' · @ RM' + gapPrice + '/g';
+    document.getElementById('gramRmNote').textContent =
+      '🏦 Remittance: $ ' + remitBND.toFixed(2) + ' BND  |  📱 E-Wallet: $ ' + ewalletBND.toFixed(2) + ' BND';
+    document.getElementById('gramRmResult').style.display = 'block';
   }
 
   function calcReset() {
