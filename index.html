@@ -493,7 +493,8 @@
 
     .price-rm { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; }
     .price-rm.sell { color: var(--gold-light); }
-    .price-rm.buy { color: #a8c4a0; }
+    .price-rm.buy { color: #6aaa60; }
+    body.light .price-rm.buy { color: #2a7a20; }
     .price-bnd { font-size: 11px; color: var(--muted); margin-top: 1px; }
     .price-bnd b { color: var(--text); font-weight: 500; }
 
@@ -527,6 +528,11 @@
     .fee-chip.prem { border-color: #4a3010; }
     .fee-chip.prem span { color: var(--gold); }
     body.light .fee-chip.prem { border-color: #c8a050; }
+
+    .fee-chip.total-jual { border-color: #4a3a70; }
+    .fee-chip.total-jual span { color: #b090e0; }
+    body.light .fee-chip.total-jual { border-color: #9070c0; }
+    body.light .fee-chip.total-jual span { color: #5030a0; }
 
     .refresh-wrap { text-align: center; margin: 16px 0 8px; }
 
@@ -971,7 +977,8 @@
   </div>
 
   <div class="refresh-wrap">
-    <button class="btn-outline" onclick="loadPrices()">⟳ &nbsp;Refresh Harga</button>
+    <span id="autoRefreshStatus" style="font-size:11px;color:var(--muted);letter-spacing:1px;">—</span>
+    <button class="btn-outline" onclick="manualRefresh()" style="margin-left:12px;">⟳ &nbsp;Refresh Sekarang</button>
   </div>
 
   <div class="disclaimer">
@@ -1388,17 +1395,17 @@ function floor2(num){
             <div>
               <div class="price-col-label">PG Jual</div>
               <div class="price-rm sell">${fmtRM(b.sell)}</div>
-              <div class="price-bnd">≈ <b>${fmtBND(toBND(b.sell))}</b> BND</div>
+              <div class="price-bnd">≈ <b>BND ${fmtBND(toBND(b.sell))}</b></div>
             </div>
             <div>
-              <div class="price-col-label">Beli Balik</div>
+              <div class="price-col-label">PG Beli</div>
               <div class="price-rm buy">${fmtRM(b.buy)}</div>
             </div>
           </div>
           <div class="price-row-fees">
             ${b.ship > 0 ? `<div class="fee-chip ship">🚚 Shipping <span>+${fmtRM(b.ship)}</span></div>` : `<div class="fee-chip ship" style="border-color:#3a4030;"><span style="color:#7a9a70;">🚚 By Appointment</span></div>`}
             <div class="fee-chip prem">⭐ Premium SS <span>+${fmtRM(b.prem)}</span></div>
-            <div class="fee-chip" style="border-color:#3a2a50;">💰 Total Jual <span style="color:#d4a8f0;">≈ ${fmtBND(toBND(totalSell))} BND</span></div>
+            <div class="fee-chip total-jual">💰 Total Jual <span>≈ BND ${fmtBND(toBND(totalSell))}</span></div>
           </div>
         </div>
       `;
@@ -1422,17 +1429,17 @@ function floor2(num){
             <div>
               <div class="price-col-label">PG Jual</div>
               <div class="price-rm sell">${fmtRM(b.sell)}</div>
-              <div class="price-bnd">≈ <b>${fmtBND(toBND(b.sell))}</b> BND</div>
+              <div class="price-bnd">≈ <b>BND ${fmtBND(toBND(b.sell))}</b></div>
             </div>
             <div>
-              <div class="price-col-label">Beli Balik</div>
+              <div class="price-col-label">PG Beli</div>
               <div class="price-rm buy">${fmtRM(b.buy)}</div>
             </div>
           </div>
           <div class="price-row-fees">
             ${b.ship > 0 ? `<div class="fee-chip ship">🚚 Shipping <span>+${fmtRM(b.ship)}</span></div>` : `<div class="fee-chip ship" style="border-color:#3a4030;"><span style="color:#7a9a70;">🚚 By Appointment</span></div>`}
             <div class="fee-chip prem">⭐ Premium SS <span>+${fmtRM(b.prem)}</span></div>
-            <div class="fee-chip" style="border-color:#3a2a50;">💰 Total Jual <span style="color:#d4a8f0;">≈ ${fmtBND(toBND(totalSell))} BND</span></div>
+            <div class="fee-chip total-jual">💰 Total Jual <span>≈ BND ${fmtBND(toBND(totalSell))}</span></div>
           </div>
         </div>
       `;
@@ -1650,7 +1657,89 @@ function floor2(num){
     document.getElementById('themeToggle').textContent = '☀️';
   }
 
-  loadLivePrices();
+  // ══════════════════════════════
+  // AUTO-REFRESH (every 20 min, synced to PG timestamp)
+  // ══════════════════════════════
+  const REFRESH_INTERVAL = 20 * 60; // seconds
+  let refreshTimer = null;
+  let countdownTimer = null;
+
+  function updateCountdownDisplay() {
+    const el = document.getElementById('autoRefreshStatus');
+    if (!el) return;
+    const now = new Date();
+
+    // Parse PG_DATA.lastUpdate e.g. "30-Mar-2026 08:35:00"
+    const raw = PG_DATA.lastUpdate || '';
+    const monthMap = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
+    const m = raw.match(/(\d{1,2})-([A-Za-z]+)-(\d{4})\s+(\d{1,2}):(\d{2})/);
+    if (!m) { el.textContent = ''; return; }
+
+    const pgTime = new Date(
+      Number(m[3]), monthMap[m[2].toLowerCase()], Number(m[1]),
+      Number(m[4]), Number(m[5]), 0
+    );
+
+    const nextRefresh = new Date(pgTime.getTime() + REFRESH_INTERVAL * 1000);
+    const secsLeft = Math.round((nextRefresh - now) / 1000);
+
+    if (secsLeft <= 0) {
+      el.textContent = 'Sedang refresh…';
+      return;
+    }
+
+    const mins = Math.floor(secsLeft / 60);
+    const secs = secsLeft % 60;
+    const nextStr = nextRefresh.toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', hour12: false });
+    el.textContent = `Refresh dalam ${mins}:${String(secs).padStart(2,'0')} (${nextStr})`;
+  }
+
+  function startAutoRefresh() {
+    clearInterval(refreshTimer);
+    clearInterval(countdownTimer);
+
+    updateCountdownDisplay();
+
+    // Tick countdown every second
+    countdownTimer = setInterval(updateCountdownDisplay, 1000);
+
+    // Schedule next refresh at PG timestamp + 20 min
+    function scheduleNext() {
+      clearInterval(refreshTimer);
+      const raw = PG_DATA.lastUpdate || '';
+      const monthMap = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
+      const m = raw.match(/(\d{1,2})-([A-Za-z]+)-(\d{4})\s+(\d{1,2}):(\d{2})/);
+      if (!m) return;
+
+      const pgTime = new Date(
+        Number(m[3]), monthMap[m[2].toLowerCase()], Number(m[1]),
+        Number(m[4]), Number(m[5]), 0
+      );
+
+      const nextRefresh = new Date(pgTime.getTime() + REFRESH_INTERVAL * 1000);
+      const delay = nextRefresh - new Date();
+
+      if (delay > 0) {
+        refreshTimer = setTimeout(async () => {
+          await loadLivePrices();
+          scheduleNext();
+        }, delay);
+      } else {
+        // Already past due — refresh now then schedule next
+        loadLivePrices().then(scheduleNext);
+      }
+    }
+
+    scheduleNext();
+  }
+
+  function manualRefresh() {
+    clearInterval(refreshTimer);
+    clearInterval(countdownTimer);
+    loadLivePrices().then(() => startAutoRefresh());
+  }
+
+  loadLivePrices().then(() => startAutoRefresh());
 </script>
 </body>
 </html>
