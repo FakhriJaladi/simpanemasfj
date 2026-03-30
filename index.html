@@ -1041,13 +1041,7 @@ function floor2(num){
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       applyLiveData(data);
-      if (!data.gap || !data.gap.pricePerGram || !data.gap.rm100Gram) {
-      setLiveStatus('Harga live diambil, tapi harga GAP tidak lengkap.', false);
-    } else if ((!data.bars || !data.bars.length) || (!data.dinars || !data.dinars.length)) {
-      setLiveStatus('Harga live diambil, tapi jadual Gold Bar / Dinar tidak lengkap.', false);
-    } else {
       setLiveStatus('Harga live berjaya diambil dari Public Gold.');
-    }
     } catch (err) {
       console.error('Live price fetch failed:', err);
       setLiveStatus('Harga live gagal diambil. Paparan guna fallback price.', false);
