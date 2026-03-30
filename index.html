@@ -1032,6 +1032,10 @@ function floor2(num){
         return live ? { ...item, sell: Number(live.sell), buy: Number(live.buy) } : item;
       });
     }
+
+    if ((!data.bars || !data.bars.length) || (!data.dinars || !data.dinars.length)) {
+      setLiveStatus('Harga GAP berjaya diambil, tapi jadual Gold Bar / Dinar tidak jumpa data live.', false);
+    }
   }
 
   async function loadLivePrices() {
