@@ -1,1 +1,1 @@
-Updated version with fixed live parsing for GAP, Gold Bar, Dinar, and latest Public Gold timestamp.
+Fixed version: GAP from Public Gold, latest live timestamp, Gold Bar and Dinar live parsing, and Target Simpanan GAP rounded-up RM + best BND method.
