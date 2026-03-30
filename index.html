@@ -17,10 +17,45 @@
       --dark: #111009;
       --card: #161410;
       --card2: #1c1a14;
+      --card-deep: #0e0c08;
+      --card-grad-a: #1f1b0d;
+      --card-grad-b: #17140c;
+      --nav-grad-a: #1b160b;
+      --nav-grad-b: #12100a;
+      --gram-grad-a: #1e1b0e;
+      --gram-grad-b: #141209;
+      --verdict-grad-a: #1e1b10;
+      --verdict-grad-b: #2a2510;
+      --milestone-grad-a: #1f1a08;
+      --milestone-grad-b: #161209;
       --border: #2a2720;
       --text: #F0EAD6;
       --muted: #6a6050;
       --green: #4caf78;
+    }
+
+    body.light {
+      --black: #f5f0e8;
+      --dark: #ede8e0;
+      --card: #ffffff;
+      --card2: #f9f5ee;
+      --card-deep: #f0ead8;
+      --card-grad-a: #fff8ee;
+      --card-grad-b: #f5ede0;
+      --nav-grad-a: #fff8ee;
+      --nav-grad-b: #f5ede0;
+      --gram-grad-a: #fff8ee;
+      --gram-grad-b: #f5ede0;
+      --verdict-grad-a: #fff8ee;
+      --verdict-grad-b: #f5ede0;
+      --milestone-grad-a: #fff8ee;
+      --milestone-grad-b: #f5ede0;
+      --border: #ddd5c0;
+      --text: #2c1f0a;
+      --muted: #7a6340;
+      --gold: #b8891e;
+      --gold-light: #9a6f10;
+      --gold-dim: #a07820;
     }
 
     body {
@@ -30,7 +65,26 @@
       min-height: 100vh;
       padding: 0 0 80px;
       background-image: radial-gradient(ellipse 80% 40% at 50% 0%, #1e1804 0%, transparent 70%);
+      transition: background 0.3s, color 0.3s;
     }
+
+    body.light {
+      background-image: radial-gradient(ellipse 80% 40% at 50% 0%, #f0e8d0 0%, transparent 70%);
+    }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 14px;
+      font-size: 17px;
+      line-height: 1;
+      opacity: 0.65;
+      transition: opacity 0.2s;
+      flex-shrink: 0;
+    }
+    .theme-toggle:hover { opacity: 1; }
 
     /* ── NAV TABS ── */
     .nav {
@@ -205,7 +259,7 @@
 
     .edit-field input {
       width: 100%;
-      background: #0e0c08;
+      background: var(--card-deep);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 10px;
@@ -254,7 +308,7 @@
     .gram-hero { max-width: 520px; margin: 0 auto 20px; padding: 0 16px; }
 
     .gram-card {
-      background: linear-gradient(135deg, #1e1b0e, #141209);
+      background: linear-gradient(135deg, var(--gram-grad-a), var(--gram-grad-b));
       border: 1px solid var(--gold-dim);
       border-radius: 20px;
       padding: 24px;
@@ -350,7 +404,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      background: linear-gradient(135deg, #1b160b, #12100a);
+      background: linear-gradient(135deg, var(--nav-grad-a), var(--nav-grad-b));
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 14px 16px;
@@ -419,7 +473,7 @@
     }
 
     .weight-badge {
-      background: #0e0c08;
+      background: var(--card-deep);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 6px 10px;
@@ -454,7 +508,7 @@
     }
 
     .fee-chip {
-      background: #0e0c08;
+      background: var(--card-deep);
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 4px 10px;
@@ -468,8 +522,11 @@
     .fee-chip span { color: var(--text); font-weight: 500; }
     .fee-chip.ship { border-color: #2a4060; }
     .fee-chip.ship span { color: #7ab0e0; }
+    body.light .fee-chip.ship { border-color: #90b8d8; }
+    body.light .fee-chip.ship span { color: #2a6090; }
     .fee-chip.prem { border-color: #4a3010; }
     .fee-chip.prem span { color: var(--gold); }
+    body.light .fee-chip.prem { border-color: #c8a050; }
 
     .refresh-wrap { text-align: center; margin: 16px 0 8px; }
 
@@ -523,7 +580,7 @@
 
     .field input[type="number"] {
       width: 100%;
-      background: #161410;
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 14px 16px;
@@ -543,7 +600,7 @@
 
     .currency-toggle {
       display: flex;
-      background: #161410;
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 4px;
@@ -589,7 +646,7 @@
 
     .calc-highlight {
       margin: 14px 0 12px;
-      background: linear-gradient(135deg, #1f1b0d, #17140c);
+      background: linear-gradient(135deg, var(--card-grad-a), var(--card-grad-b));
       border: 1px solid var(--gold-dim);
       border-radius: 14px;
       padding: 14px;
@@ -663,7 +720,7 @@
     .method-block.winner .winner-badge { display: block; }
 
     .verdict {
-      background: linear-gradient(135deg, #1e1b10, #2a2510);
+      background: linear-gradient(135deg, var(--verdict-grad-a), var(--verdict-grad-b));
       border: 1px solid var(--gold-dim);
       border-radius: 14px;
       padding: 18px 22px;
@@ -703,7 +760,149 @@
 
     .btn-reset:hover { border-color: var(--muted); color: var(--text); }
 
-    /* ── ANIMATIONS ── */
+    /* ── TARGET GRAM PAGE ── */
+    .target-wrap {
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .target-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    .target-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+
+    .milestone-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .milestone-chip {
+      background: var(--card-deep);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .milestone-chip:hover { border-color: var(--gold-dim); }
+
+    .milestone-chip.active {
+      border-color: var(--gold);
+      background: linear-gradient(135deg, var(--milestone-grad-a), var(--milestone-grad-b));
+    }
+
+    .milestone-chip-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+
+    .milestone-chip-label {
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .target-result-box {
+      display: none;
+      margin-top: 18px;
+      background: linear-gradient(135deg, var(--card-grad-a), var(--card-grad-b));
+      border: 1px solid var(--gold-dim);
+      border-radius: 16px;
+      padding: 22px;
+      text-align: center;
+    }
+
+    .target-result-box.visible { display: block; }
+
+    .target-gram-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 8px;
+    }
+
+    .target-gram-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 56px;
+      font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+
+    .target-gram-unit {
+      font-size: 20px;
+      color: var(--gold-dim);
+    }
+
+    .target-breakdown {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .target-breakdown-item {
+      background: var(--card-deep);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .tb-label {
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .tb-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      color: var(--text);
+    }
+
+    .tb-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .target-note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
+    .target-note b { color: var(--gold-dim); }
+  
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
@@ -725,6 +924,8 @@
 <nav class="nav">
   <button class="nav-btn active" onclick="showPage('prices', this)">💰 Harga Emas</button>
   <button class="nav-btn" onclick="showPage('calc', this)">🧮 Kalkulator</button>
+  <button class="nav-btn" onclick="showPage('target', this)">🎯 Target Gram</button>
+  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Tukar tema">🌙</button>
 </nav>
 
 <!-- ════════════════════════════════════════════
@@ -804,7 +1005,7 @@
         <label>Berapa gram mau disimpan?</label>
         <input type="number" id="calcTargetGram" placeholder="Contoh: 0.5" step="0.0001" min="0.0001"/>
       </div>
-      <div id="gramRmResult" style="display:none;background:#1a1810;border:1px solid #3a3020;border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+      <div id="gramRmResult" style="display:none;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:14px;">
         <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#6a5a30;margin-bottom:6px;">RM yang diperlukan</div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:22px;color:#E8C97A;" id="gramRmRM">—</div>
         <div style="font-size:11px;color:#6a6050;margin-top:3px;" id="gramRmNote">—</div>
@@ -862,9 +1063,75 @@
 
 </div>
 
+<!-- ════════════════════════════════════════════
+     PAGE 3 — TARGET GRAM
+════════════════════════════════════════════ -->
+<div class="page" id="page-target">
+
+  <div class="header">
+    <div class="tag">Simpan Emas Fakhri Jaladi</div>
+    <h1>Target<br/><em>Gram Emas</em></h1>
+  </div>
+
+  <div class="target-wrap">
+    <div class="target-card">
+      <div class="target-card-title">🎯 Berapa Target BND Anda?</div>
+
+      <!-- Quick milestone chips -->
+      <div class="milestone-grid" id="milestoneGrid">
+        <div class="milestone-chip" onclick="setMilestone(500, this)">
+          <div class="milestone-chip-val">$500</div>
+          <div class="milestone-chip-label">Mula</div>
+        </div>
+        <div class="milestone-chip" onclick="setMilestone(1000, this)">
+          <div class="milestone-chip-val">$1K</div>
+          <div class="milestone-chip-label">Asas</div>
+        </div>
+        <div class="milestone-chip" onclick="setMilestone(2000, this)">
+          <div class="milestone-chip-val">$2K</div>
+          <div class="milestone-chip-label">Sederhana</div>
+        </div>
+        <div class="milestone-chip" onclick="setMilestone(5000, this)">
+          <div class="milestone-chip-val">$5K</div>
+          <div class="milestone-chip-label">Mantap</div>
+        </div>
+        <div class="milestone-chip" onclick="setMilestone(10000, this)">
+          <div class="milestone-chip-val">$10K</div>
+          <div class="milestone-chip-label">Besar</div>
+        </div>
+        <div class="milestone-chip" onclick="setMilestone(20000, this)">
+          <div class="milestone-chip-val">$20K</div>
+          <div class="milestone-chip-label">Impian</div>
+        </div>
+      </div>
+
+      <!-- Custom BND input -->
+      <div class="field">
+        <label>Atau masukkan jumlah BND anda sendiri ($)</label>
+        <input type="number" id="targetBndInput" placeholder="Contoh: 3000" step="1" min="1"
+          oninput="clearMilestones()" onkeydown="if(event.key==='Enter') calcTargetGram()"/>
+      </div>
+
+      <button class="btn-gold" onclick="calcTargetGram()">Kira Gram Diperlukan →</button>
+
+      <!-- Result -->
+      <div class="target-result-box" id="targetResult">
+        <div class="target-gram-label">Gram Emas Diperlukan</div>
+        <div>
+          <span class="target-gram-value" id="targetGramVal">—</span>
+          <span class="target-gram-unit"> g</span>
+        </div>
+        <div style="font-size:13px;color:var(--muted);margin-top:10px;" id="targetGramSub">—</div>
+      </div>
+
+      <button class="btn-reset" id="targetResetBtn" style="display:none;margin-top:12px;" onclick="resetTargetCalc()">← Kira Semula</button>
+    </div>
+  </div>
+
+</div>
+
 <script>
 
-  
 function floor2(num){
   return Math.floor(num * 100) / 100;
 }
@@ -1322,7 +1589,67 @@ function floor2(num){
     document.getElementById('cEwalletBlock').classList.remove('winner');
   }
 
-  // Init
+  // ══════════════════════════════
+  // TARGET GRAM CALCULATOR
+  // ══════════════════════════════
+  function setMilestone(val, el) {
+    document.getElementById('targetBndInput').value = val;
+    document.querySelectorAll('.milestone-chip').forEach(c => c.classList.remove('active'));
+    if (el) el.classList.add('active');
+    calcTargetGram();
+  }
+
+  function clearMilestones() {
+    document.querySelectorAll('.milestone-chip').forEach(c => c.classList.remove('active'));
+  }
+
+  function calcTargetGram() {
+    const bndTarget = parseFloat(document.getElementById('targetBndInput').value);
+    const gapPrice = PG_DATA.pricePerGram.sell;
+
+    if (!bndTarget || bndTarget <= 0) {
+      alert('Sila masukkan jumlah BND yang sah.');
+      return;
+    }
+
+    const rate = CONFIG.remitRate;
+    const rmAvailable = bndTarget * rate;
+    const exactGram = rmAvailable / gapPrice;
+    const wholeGram = Math.ceil(exactGram);
+
+    document.getElementById('targetGramVal').textContent = wholeGram.toLocaleString('en-MY');
+    const bndEquiv = (wholeGram * gapPrice) / rate;
+    document.getElementById('targetGramSub').textContent =
+      `${wholeGram}g ≈ BND $${bndEquiv.toLocaleString('en-BN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+
+    document.getElementById('targetResult').classList.add('visible');
+    document.getElementById('targetResetBtn').style.display = 'block';
+    document.getElementById('targetResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function resetTargetCalc() {
+    document.getElementById('targetBndInput').value = '';
+    document.getElementById('targetResult').classList.remove('visible');
+    document.getElementById('targetResetBtn').style.display = 'none';
+    clearMilestones();
+  }
+
+
+  // ══════════════════════════════
+  // THEME TOGGLE
+  // ══════════════════════════════
+  function toggleTheme() {
+    const isLight = document.body.classList.toggle('light');
+    document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+
+  // Restore saved theme
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('themeToggle').textContent = '☀️';
+  }
+
   loadLivePrices();
 </script>
 </body>
