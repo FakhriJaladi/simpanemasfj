@@ -1032,10 +1032,6 @@ function floor2(num){
         return live ? { ...item, sell: Number(live.sell), buy: Number(live.buy) } : item;
       });
     }
-
-    if ((!data.bars || !data.bars.length) || (!data.dinars || !data.dinars.length)) {
-      setLiveStatus('Harga GAP berjaya diambil, tapi jadual Gold Bar / Dinar tidak jumpa data live.', false);
-    }
   }
 
   async function loadLivePrices() {
@@ -1292,14 +1288,17 @@ function floor2(num){
 
   function calcGramToRM() {
     const gram = parseFloat(document.getElementById('calcTargetGram').value);
-    if (!gram || gram <= 0) { alert('Masukkan jumlah gram yang sah.'); return; }
     const gapPrice = PG_DATA.pricePerGram.sell;
-    const rmNeeded = gram * gapPrice;
-    const remitBND = (rmNeeded / CONFIG.remitRate) + CONFIG.remitCharge;
-    const ewalletBND = rmNeeded / CONFIG.ewalletRate;
-    document.getElementById('gramRmRM').textContent = 'RM ' + rmNeeded.toFixed(2) + ' · @ RM' + gapPrice + '/g';
-    document.getElementById('gramRmNote').textContent =
-      '🏦 Remittance: $ ' + remitBND.toFixed(2) + ' BND  |  📱 E-Wallet: $ ' + ewalletBND.toFixed(2) + ' BND';
+
+    if (!gram || gram <= 0 || !gapPrice || gapPrice <= 0) {
+      alert('Sila masukkan jumlah gram yang sah.');
+      return;
+    }
+
+    const rmExact = gram * gapPrice;
+    const rmRoundedUp = Math.ceil(rmExact);
+    document.getElementById('gramRmRM').textContent = 'RM ' + rmRoundedUp.toLocaleString('en-MY');
+    document.getElementById('gramRmNote').textContent = `${gram.toFixed(4)} g × RM ${gapPrice.toFixed(2)} = RM ${rmExact.toFixed(2)} · dibundarkan naik`;
     document.getElementById('gramRmResult').style.display = 'block';
   }
 
