@@ -876,8 +876,8 @@ function floor2(num){
   // Used only if live fetch fails
   // ══════════════════════════════
   const SETTINGS = {
-    lastUpdate: "30-Mar-2026 09:00",
-    gapPrice: 630,
+    lastUpdate: "30-Mar-2026 08:35",
+    gapPrice: 627,
     remitRate: 3.010,
     remitCharge: 2.00,
     ewalletRate: 2.940
@@ -900,19 +900,19 @@ function floor2(num){
     ],
     bars: [
       // weight, sell, buy, shipping(RM East MY GIT), premium(RM SS)
-      { weight: "5g",   sell: 3148,   buy: 2865,  ship: 25,  prem: 15  },
-      { weight: "10g",  sell: 6296,   buy: 5730,  ship: 30,  prem: 15  },
-      { weight: "20g",  sell: 12541,  buy: 11537, ship: 35,  prem: 20  },
-      { weight: "50g",  sell: 31207,  buy: 28866, ship: 0,   prem: 80  },
-      { weight: "100g", sell: 62124,  buy: 57776, ship: 0,   prem: 140 },
-      { weight: "250g", sell: 154804, buy: 145516,ship: 0,   prem: 200 },
-      { weight: "1000g",sell: 619216, buy: 582063,ship: 0,   prem: 500 },
+      { weight: "5g",    sell: 3127,   buy: 2845,  ship: 25,  prem: 15  },
+      { weight: "10g",   sell: 6253,   buy: 5690,  ship: 30,  prem: 15  },
+      { weight: "20g",   sell: 12454,  buy: 11458, ship: 35,  prem: 20  },
+      { weight: "50g",   sell: 30992,  buy: 28668, ship: 0,   prem: 80  },
+      { weight: "100g",  sell: 61697,  buy: 57378, ship: 0,   prem: 140 },
+      { weight: "250g",  sell: 153739, buy: 144515,ship: 0,   prem: 200 },
+      { weight: "1000g", sell: 614958, buy: 578060,ship: 0,   prem: 500 },
     ],
     dinars: [
       // dinar, sell, buy, shipping(RM East MY), premium(RM SS)
-      { weight: "1 dinar",  sell: 2671,  buy: 2431,  ship: 25, prem: 15 },
-      { weight: "5 dinar",  sell: 13355, buy: 12287, ship: 35, prem: 20 },
-      { weight: "10 dinar", sell: 26711, buy: 24707, ship: 0,  prem: 80 },
+      { weight: "1 dinar",  sell: 2653,  buy: 2414,  ship: 25, prem: 15 },
+      { weight: "5 dinar",  sell: 13263, buy: 12202, ship: 35, prem: 20 },
+      { weight: "10 dinar", sell: 26527, buy: 24537, ship: 0,  prem: 80 },
     ],
   };
 
@@ -991,7 +991,9 @@ function floor2(num){
   }
 
   function normalizeWeight(weight) {
-    return String(weight).trim().toLowerCase().replace(/\s+/g, '');
+    return String(weight).trim().toLowerCase()
+      .replace(/\s+/g, '')   // remove spaces
+      .replace(/gram/g, 'g'); // normalize "gram" -> "g"
   }
 
   function applyLiveData(data) {
