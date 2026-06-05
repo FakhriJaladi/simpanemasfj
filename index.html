@@ -1667,24 +1667,26 @@ function floor2(num){
   let refreshTimer = null;
   let countdownTimer = null;
 
+  function parsePgDate(raw) {
+    if (!raw) return null;
+    const monthMap = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
+    // Matches "30-Mar-2026 08:35:00" or "30-Mar-2026 08:35" or just "30-Mar-2026"
+    const m = String(raw).match(/(\d{1,2})-([A-Za-z]+)-(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
+    if (!m) return null;
+    const month = monthMap[m[2].toLowerCase()];
+    if (month === undefined) return null;
+    return new Date(Number(m[3]), month, Number(m[1]), Number(m[4]||0), Number(m[5]||0), 0);
+  }
+
   function updateCountdownDisplay() {
     const el = document.getElementById('autoRefreshStatus');
     if (!el) return;
-    const now = new Date();
 
-    // Parse PG_DATA.lastUpdate e.g. "30-Mar-2026 08:35:00"
-    const raw = PG_DATA.lastUpdate || '';
-    const monthMap = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
-    const m = raw.match(/(\d{1,2})-([A-Za-z]+)-(\d{4})\s+(\d{1,2}):(\d{2})/);
-    if (!m) { el.textContent = ''; return; }
-
-    const pgTime = new Date(
-      Number(m[3]), monthMap[m[2].toLowerCase()], Number(m[1]),
-      Number(m[4]), Number(m[5]), 0
-    );
+    const pgTime = parsePgDate(PG_DATA.lastUpdate);
+    if (!pgTime) { el.textContent = ''; return; }
 
     const nextRefresh = new Date(pgTime.getTime() + REFRESH_INTERVAL * 1000);
-    const secsLeft = Math.round((nextRefresh - now) / 1000);
+    const secsLeft = Math.round((nextRefresh - new Date()) / 1000);
 
     if (secsLeft <= 0) {
       el.textContent = 'Sedang refresh…';
@@ -1709,20 +1711,11 @@ function floor2(num){
     // Schedule next refresh at PG timestamp + 20 min
     function scheduleNext() {
       clearTimeout(refreshTimer);
-      const raw = PG_DATA.lastUpdate || '';
-      const monthMap = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
-      const m = raw.match(/(\d{1,2})-([A-Za-z]+)-(\d{4})\s+(\d{1,2}):(\d{2})/);
-      if (!m) return;
-
-      const pgTime = new Date(
-        Number(m[3]), monthMap[m[2].toLowerCase()], Number(m[1]),
-        Number(m[4]), Number(m[5]), 0
-      );
+      const pgTime = parsePgDate(PG_DATA.lastUpdate);
+      if (!pgTime) return;
 
       const nextRefresh = new Date(pgTime.getTime() + REFRESH_INTERVAL * 1000);
       const delay = nextRefresh - new Date();
-
-      // Always wait at least 60 seconds before next refresh to avoid tight loops
       const safeDelay = Math.max(delay, 60 * 1000);
 
       refreshTimer = setTimeout(async () => {
