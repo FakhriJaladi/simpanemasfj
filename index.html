@@ -909,9 +909,308 @@
 
     .target-note b { color: var(--gold-dim); }
   
+    /* ── GOAL CARDS ── */
+    .goal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .goal-chip {
+      background: var(--card-deep);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .goal-chip:hover { border-color: var(--gold-dim); }
+
+    .goal-chip.active {
+      border-color: var(--gold);
+      background: linear-gradient(135deg, var(--milestone-grad-a), var(--milestone-grad-b));
+    }
+
+    .goal-chip-icon { font-size: 26px; margin-bottom: 6px; line-height: 1; }
+
+    .goal-chip-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .goal-chip-amt {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      color: var(--gold-light);
+    }
+
+    /* Goal context banner */
+    .goal-context {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--card-grad-a), var(--card-grad-b));
+      border: 1px solid var(--gold-dim);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .goal-context-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+
+    .goal-context-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+    }
+
+    .goal-context-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── TESTIMONI PAGE ── */
+    .testi-wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 16px 32px;
+    }
+
+    .testi-intro {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 24px;
+      line-height: 1.7;
+    }
+
+    .testi-item {
+      margin-bottom: 20px;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .testi-name {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 8px;
+      padding-left: 4px;
+    }
+
+    .testi-img {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      display: block;
+      background: var(--card2);
+    }
+
+    /* Lightbox */
+    .testi-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .testi-lightbox.open { display: flex; }
+
+    .testi-lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+
+    .testi-lightbox-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-size: 28px;
+      color: #fff;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    .testi-loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .testi-spinner {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .testi-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .testi-cta {
+      margin-top: 32px;
+      background: linear-gradient(135deg, var(--card-grad-a), var(--card-grad-b));
+      border: 1px solid var(--gold-dim);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .testi-cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+
+    .testi-cta-sub {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── EMERGENCY FUND PANEL ── */
+    .ef-panel {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .ef-title {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 14px;
+    }
+
+    .ef-row { margin-bottom: 12px; }
+
+    .ef-row label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    .ef-row input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 17px;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .ef-row input:focus { border-color: var(--gold-dim); }
+    .ef-row input::placeholder { color: var(--muted); font-size: 14px; }
+
+    .ef-months { display: flex; gap: 8px; }
+
+    .ef-month-btn {
+      flex: 1;
+      padding: 9px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--card);
+      color: var(--muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ef-month-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: linear-gradient(135deg, var(--milestone-grad-a), var(--milestone-grad-b));
+    }
+
+    .ef-result {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .ef-result-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .ef-result-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+
+    .ef-result-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      margin-bottom: 12px;
+    }
+
+    .ef-use-btn {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      border: none;
+      border-radius: 9px;
+      padding: 10px 22px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #090806;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .ef-use-btn:hover { opacity: 0.9; }
+
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     .fadein { animation: fadeUp 0.45s ease both; }
@@ -931,6 +1230,7 @@
   <button class="nav-btn active" onclick="showPage('prices', this)">💰 Harga Emas</button>
   <button class="nav-btn" onclick="showPage('calc', this)">🧮 Kalkulator</button>
   <button class="nav-btn" onclick="showPage('target', this)">🎯 Target Gram</button>
+  <button class="nav-btn" onclick="showPage('testimoni', this)">⭐ Testimoni</button>
   <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Tukar tema">🌙</button>
 </nav>
 
@@ -944,7 +1244,6 @@
     <h1>Harga Emas<br/><em>Hari Ini</em></h1>
     <p class="last-updated">Sumber: <a href="https://www.publicgold.com.my" target="_blank" rel="noopener noreferrer">publicgold.com.my</a> · Dikemaskini: <span id="updateTime">—</span></p>
     <p class="last-updated" id="liveStatus" style="margin-top:4px;">Sedang ambil harga live…</p>
-    <p class="last-updated" id="autoRefreshStatus" style="margin-top:4px;">—</p>
   </div>
 
   <!-- Rate Toggle -->
@@ -977,7 +1276,10 @@
     <div class="loading">Memuatkan harga emas...</div>
   </div>
 
-
+  <div class="refresh-wrap">
+    <span id="autoRefreshStatus" style="font-size:11px;color:var(--muted);letter-spacing:1px;">—</span>
+    <button class="btn-outline" onclick="manualRefresh()" style="margin-left:12px;">⟳ &nbsp;Refresh Sekarang</button>
+  </div>
 
   <div class="disclaimer">
     Harga dalam RM adalah dari <a href="https://www.publicgold.com.my" target="_blank" rel="noopener noreferrer">publicgold.com.my</a>.<br/>
@@ -1080,33 +1382,65 @@
 
   <div class="target-wrap">
     <div class="target-card">
-      <div class="target-card-title">🎯 Berapa Target BND Anda?</div>
+      <div class="target-card-title">🎯 Pilih Matlamat Simpanan Anda</div>
 
-      <!-- Quick milestone chips -->
-      <div class="milestone-grid" id="milestoneGrid">
-        <div class="milestone-chip" onclick="setMilestone(500, this)">
-          <div class="milestone-chip-val">$500</div>
-          <div class="milestone-chip-label">Mula</div>
+      <!-- Goal cards -->
+      <div class="goal-grid">
+        <div class="goal-chip" onclick="setGoal(this, 'Dana Kecemasan', '🆘', 'Simpan sekurang-kurangnya 3 bulan gaji. Emas melindungi nilai wang anda daripada inflasi semasa kecemasan.')">
+          <div class="goal-chip-icon">🆘</div>
+          <div class="goal-chip-name">Dana Kecemasan</div>
         </div>
-        <div class="milestone-chip" onclick="setMilestone(1000, this)">
-          <div class="milestone-chip-val">$1K</div>
-          <div class="milestone-chip-label">Asas</div>
+        <div class="goal-chip" onclick="setGoal(this, 'Pendidikan Anak', '🎓', 'Mula simpan awal untuk yuran universiti. Emas tumbuh mengikut nilai pasaran dunia, lebih selamat dari wang tunai.')">
+          <div class="goal-chip-icon">🎓</div>
+          <div class="goal-chip-name">Pendidikan Anak</div>
         </div>
-        <div class="milestone-chip" onclick="setMilestone(2000, this)">
-          <div class="milestone-chip-val">$2K</div>
-          <div class="milestone-chip-label">Sederhana</div>
+        <div class="goal-chip" onclick="setGoal(this, 'Haji &amp; Umrah', '🕌', 'Mulakan persediaan rohani dan kewangan awal. Simpan dalam emas agar nilai tidak susut semasa menunggu giliran.')">
+          <div class="goal-chip-icon">🕌</div>
+          <div class="goal-chip-name">Haji &amp; Umrah</div>
         </div>
-        <div class="milestone-chip" onclick="setMilestone(5000, this)">
-          <div class="milestone-chip-val">$5K</div>
-          <div class="milestone-chip-label">Mantap</div>
+        <div class="goal-chip" onclick="setGoal(this, 'Deposit Rumah', '🏠', 'Kumpul deposit 10% untuk rumah impian. Emas selamat dari turun naik inflasi jangka panjang.')">
+          <div class="goal-chip-icon">🏠</div>
+          <div class="goal-chip-name">Deposit Rumah</div>
         </div>
-        <div class="milestone-chip" onclick="setMilestone(10000, this)">
-          <div class="milestone-chip-val">$10K</div>
-          <div class="milestone-chip-label">Besar</div>
+        <div class="goal-chip" onclick="setGoal(this, 'Majlis Perkahwinan', '💒', 'Rancang awal untuk majlis yang sempurna tanpa bebanan hutang. Simpan sedikit demi sedikit, nilai tumbuh.')">
+          <div class="goal-chip-icon">💒</div>
+          <div class="goal-chip-name">Perkahwinan</div>
         </div>
-        <div class="milestone-chip" onclick="setMilestone(20000, this)">
-          <div class="milestone-chip-val">$20K</div>
-          <div class="milestone-chip-label">Impian</div>
+        <div class="goal-chip" onclick="setGoal(this, 'Pencen &amp; Bebas', '🌴', 'Simpan emas untuk masa tua yang tenang. Nilai emas terbukti kukuh merentas generasi.')">
+          <div class="goal-chip-icon">🌴</div>
+          <div class="goal-chip-name">Pencen &amp; Bebas</div>
+        </div>
+      </div>
+
+      <!-- Context banner — shown when a goal is selected -->
+      <div class="goal-context" id="goalContext" style="display:none;">
+        <div class="goal-context-icon" id="goalContextIcon"></div>
+        <div style="flex:1;">
+          <div class="goal-context-title" id="goalContextTitle"></div>
+          <div class="goal-context-desc" id="goalContextDesc"></div>
+        </div>
+      </div>
+
+      <!-- Emergency fund mini-calculator — shown only for Dana Kecemasan -->
+      <div class="ef-panel" id="efPanel" style="display:none;">
+        <div class="ef-title">🧮 Kira Dana Kecemasan Anda</div>
+        <div class="ef-row">
+          <label>Pendapatan bulanan (BND$)</label>
+          <input type="number" id="efSalary" placeholder="Contoh: 1500" min="1" step="1" oninput="calcEF()"/>
+        </div>
+        <div class="ef-row">
+          <label>Bilangan bulan</label>
+          <div class="ef-months">
+            <button class="ef-month-btn active" onclick="setEFMonths(this, 3)">3 bulan</button>
+            <button class="ef-month-btn" onclick="setEFMonths(this, 4)">4 bulan</button>
+            <button class="ef-month-btn" onclick="setEFMonths(this, 6)">6 bulan</button>
+          </div>
+        </div>
+        <div class="ef-result" id="efResult" style="display:none;">
+          <div class="ef-result-label">Dana Kecemasan Disyorkan</div>
+          <div class="ef-result-val" id="efResultVal">—</div>
+          <div class="ef-result-sub" id="efResultSub">—</div>
+          <button class="ef-use-btn" onclick="useEFResult()">Guna jumlah ini →</button>
         </div>
       </div>
 
@@ -1114,7 +1448,7 @@
       <div class="field">
         <label>Atau masukkan jumlah BND anda sendiri ($)</label>
         <input type="number" id="targetBndInput" placeholder="Contoh: 3000" step="1" min="1"
-          oninput="clearMilestones()" onkeydown="if(event.key==='Enter') calcTargetGram()"/>
+          oninput="clearGoals()" onkeydown="if(event.key==='Enter') calcTargetGram()"/>
       </div>
 
       <button class="btn-gold" onclick="calcTargetGram()">Kira Gram Diperlukan →</button>
@@ -1135,7 +1469,35 @@
 
 </div>
 
-<script>
+<!-- ════════════════════════════════════════════
+     PAGE 4 — TESTIMONI
+════════════════════════════════════════════ -->
+<div class="page" id="page-testimoni">
+
+  <div class="header">
+    <div class="tag">Simpan Emas Fakhri Jaladi</div>
+    <h1>Testimoni<br/><em>Pelanggan Kami</em></h1>
+  </div>
+
+  <div class="testi-wrap">
+    <div class="testi-intro">
+      Perkongsian ikhlas dari sahabat-sahabat yang telah mula simpan emas bersama kami. 🌟
+    </div>
+
+    <div id="testiList">
+      <div class="testi-loading">
+        <div class="testi-spinner"></div>
+        <div>Memuatkan testimoni…</div>
+      </div>
+    </div>
+
+    <div class="testi-cta">
+      <div class="testi-cta-title">Ingin berkongsi pengalaman anda?</div>
+      <div class="testi-cta-sub">Hubungi Fakhri untuk menambah testimoni anda di sini.</div>
+    </div>
+  </div>
+
+</div>
 
 function floor2(num){
   return Math.floor(num * 100) / 100;
@@ -1251,8 +1613,6 @@ function floor2(num){
     renderPrices();
   }
 
-  let isFirstLoad = true;
-
   function loadPrices() {
     document.getElementById('updateTime').textContent = PG_DATA.lastUpdate || '—';
     renderPrices();
@@ -1327,14 +1687,13 @@ function floor2(num){
   function renderPrices() {
     const gapPrice = PG_DATA.pricePerGram.sell;
     const d = PG_DATA;
-    const anim = isFirstLoad ? 'fadein' : '';
 
     let html = ``;
     const gapBnd = fmtBND(toBND(gapPrice));
 
     html += `
-      <div class="section ${anim}"><div class="section-title">✦ Gold Accumulation Program (GAP)</div></div>
-      <div class="gap-card ${anim}">
+      <div class="section fadein"><div class="section-title">✦ Gold Accumulation Program (GAP)</div></div>
+      <div class="gap-card fadein">
         <div class="gap-inner">
           <div class="gap-row">
             <div class="gap-left">
@@ -1381,7 +1740,7 @@ function floor2(num){
         </div>
       </div>
 
-      <div class="product-grid ${anim}">
+      <div class="product-grid fadein">
         <div class="product-panel">
           <div class="section"><div class="section-title nice"><span>✦ Gold Bar 24K</span><span>Live Table</span></div></div>
           <div class="table-wrap">
@@ -1390,7 +1749,7 @@ function floor2(num){
     d.bars.forEach(b => {
       const totalSell = b.sell + b.ship + b.prem;
       html += `
-        <div class="price-row ${anim}">
+        <div class="price-row fadein">
           <div class="price-row-top">
             <div class="weight-badge">${b.weight}</div>
             <div>
@@ -1424,7 +1783,7 @@ function floor2(num){
     d.dinars.forEach(b => {
       const totalSell = b.sell + b.ship + b.prem;
       html += `
-        <div class="price-row ${anim}">
+        <div class="price-row fadein">
           <div class="price-row-top">
             <div class="weight-badge" style="font-size:11px;">${b.weight}</div>
             <div>
@@ -1455,7 +1814,6 @@ function floor2(num){
     document.getElementById('mainContent').innerHTML = html;
     document.getElementById('remitRateDisplay').textContent = CONFIG.remitRate.toFixed(3);
     document.getElementById('ewalletRateDisplay').textContent = CONFIG.ewalletRate.toFixed(3);
-    isFirstLoad = false;
   }
 
   // ══════════════════════════════
@@ -1601,15 +1959,63 @@ function floor2(num){
   // ══════════════════════════════
   // TARGET GRAM CALCULATOR
   // ══════════════════════════════
-  function setMilestone(val, el) {
-    document.getElementById('targetBndInput').value = val;
-    document.querySelectorAll('.milestone-chip').forEach(c => c.classList.remove('active'));
-    if (el) el.classList.add('active');
+  let efMonths = 3;
+
+  function setGoal(el, title, icon, desc) {
+    document.querySelectorAll('.goal-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+
+    document.getElementById('goalContextIcon').textContent = icon;
+    document.getElementById('goalContextTitle').textContent = title;
+    document.getElementById('goalContextDesc').textContent = desc;
+    document.getElementById('goalContext').style.display = 'flex';
+
+    // Show EF panel only for Dana Kecemasan
+    const isEF = title === 'Dana Kecemasan';
+    document.getElementById('efPanel').style.display = isEF ? 'block' : 'none';
+    document.getElementById('efResult').style.display = 'none';
+
+    // Clear result and focus input
+    document.getElementById('targetResult').classList.remove('visible');
+    document.getElementById('targetResetBtn').style.display = 'none';
+    document.getElementById('targetBndInput').value = '';
+    if (!isEF) document.getElementById('targetBndInput').focus();
+  }
+
+  function setEFMonths(btn, months) {
+    efMonths = months;
+    document.querySelectorAll('.ef-month-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    calcEF();
+  }
+
+  function calcEF() {
+    const salary = parseFloat(document.getElementById('efSalary').value);
+    if (!salary || salary <= 0) {
+      document.getElementById('efResult').style.display = 'none';
+      return;
+    }
+    const total = salary * efMonths;
+    document.getElementById('efResultVal').textContent =
+      '$ ' + total.toLocaleString('en-BN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('efResultSub').textContent =
+      `BND $${salary.toLocaleString('en-BN')} × ${efMonths} bulan`;
+    document.getElementById('efResult').style.display = 'block';
+  }
+
+  function useEFResult() {
+    const salary = parseFloat(document.getElementById('efSalary').value);
+    if (!salary) return;
+    const total = Math.ceil(salary * efMonths);
+    document.getElementById('targetBndInput').value = total;
+    document.getElementById('targetBndInput').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     calcTargetGram();
   }
 
-  function clearMilestones() {
-    document.querySelectorAll('.milestone-chip').forEach(c => c.classList.remove('active'));
+  function clearGoals() {
+    document.querySelectorAll('.goal-chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('goalContext').style.display = 'none';
+    document.getElementById('efPanel').style.display = 'none';
   }
 
   function calcTargetGram() {
@@ -1640,9 +2046,60 @@ function floor2(num){
     document.getElementById('targetBndInput').value = '';
     document.getElementById('targetResult').classList.remove('visible');
     document.getElementById('targetResetBtn').style.display = 'none';
-    clearMilestones();
+    document.getElementById('efSalary').value = '';
+    document.getElementById('efResult').style.display = 'none';
+    clearGoals();
   }
 
+
+  // ══════════════════════════════
+  // TESTIMONI
+  // ══════════════════════════════
+  async function loadTestimoni() {
+    const list = document.getElementById('testiList');
+    try {
+      const res = await fetch('/testimoni/index.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('not found');
+      const items = await res.json(); // array of { name, file }
+
+      if (!items.length) {
+        list.innerHTML = `<div class="testi-empty">Belum ada testimoni lagi.<br/>Nantikan perkongsian dari pelanggan kami! 🌟</div>`;
+        return;
+      }
+
+      list.innerHTML = items.map((t, i) => `
+        <div class="testi-item" style="animation-delay:${i * 0.08}s">
+          <div class="testi-name">⭐ ${t.name}</div>
+          <img class="testi-img" src="/testimoni/${t.file}" alt="${t.name}"
+            loading="lazy" onclick="openLightbox('/testimoni/${t.file}')"
+            style="cursor:pointer;" />
+        </div>
+      `).join('');
+
+    } catch {
+      list.innerHTML = `<div class="testi-empty">Belum ada testimoni lagi.<br/>Nantikan perkongsian dari pelanggan kami! 🌟</div>`;
+    }
+  }
+
+  function openLightbox(src) {
+    document.getElementById('testiLightboxImg').src = src;
+    document.getElementById('testiLightbox').classList.add('open');
+  }
+
+  function closeLightbox() {
+    document.getElementById('testiLightbox').classList.remove('open');
+  }
+
+  // Load testimoni when tab is first opened
+  let testiLoaded = false;
+  const origShowPage = showPage;
+  function showPage(id, btn) {
+    origShowPage(id, btn);
+    if (id === 'testimoni' && !testiLoaded) {
+      testiLoaded = true;
+      loadTestimoni();
+    }
+  }
 
   // ══════════════════════════════
   // THEME TOGGLE
@@ -1666,31 +2123,27 @@ function floor2(num){
   let refreshTimer = null;
   let countdownTimer = null;
 
-  function parsePgDate(raw) {
-    if (!raw) return null;
-    const monthMap = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
-    // Matches "30-Mar-2026 08:35:00" or "30-Mar-2026 08:35" or just "30-Mar-2026"
-    const m = String(raw).match(/(\d{1,2})-([A-Za-z]+)-(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
-    if (!m) return null;
-    const month = monthMap[m[2].toLowerCase()];
-    if (month === undefined) return null;
-    return new Date(Number(m[3]), month, Number(m[1]), Number(m[4]||0), Number(m[5]||0), 0);
-  }
-
   function updateCountdownDisplay() {
     const el = document.getElementById('autoRefreshStatus');
     if (!el) return;
+    const now = new Date();
 
-    const pgTime = parsePgDate(PG_DATA.lastUpdate);
-    if (!pgTime) { el.textContent = ''; return; }
+    // Parse PG_DATA.lastUpdate e.g. "30-Mar-2026 08:35:00"
+    const raw = PG_DATA.lastUpdate || '';
+    const monthMap = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
+    const m = raw.match(/(\d{1,2})-([A-Za-z]+)-(\d{4})\s+(\d{1,2}):(\d{2})/);
+    if (!m) { el.textContent = ''; return; }
+
+    const pgTime = new Date(
+      Number(m[3]), monthMap[m[2].toLowerCase()], Number(m[1]),
+      Number(m[4]), Number(m[5]), 0
+    );
 
     const nextRefresh = new Date(pgTime.getTime() + REFRESH_INTERVAL * 1000);
-    const secsLeft = Math.round((nextRefresh - new Date()) / 1000);
+    const secsLeft = Math.round((nextRefresh - now) / 1000);
 
     if (secsLeft <= 0) {
-      // Past due — show how long since last update
-      const minsSince = Math.abs(Math.floor(secsLeft / 60));
-      el.textContent = `Harga dikemaskini ${minsSince} minit lalu · Menunggu harga baru…`;
+      el.textContent = 'Sedang refresh…';
       return;
     }
 
@@ -1701,7 +2154,7 @@ function floor2(num){
   }
 
   function startAutoRefresh() {
-    clearTimeout(refreshTimer);
+    clearInterval(refreshTimer);
     clearInterval(countdownTimer);
 
     updateCountdownDisplay();
@@ -1711,33 +2164,47 @@ function floor2(num){
 
     // Schedule next refresh at PG timestamp + 20 min
     function scheduleNext() {
-      clearTimeout(refreshTimer);
-      const pgTime = parsePgDate(PG_DATA.lastUpdate);
-      if (!pgTime) return;
+      clearInterval(refreshTimer);
+      const raw = PG_DATA.lastUpdate || '';
+      const monthMap = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
+      const m = raw.match(/(\d{1,2})-([A-Za-z]+)-(\d{4})\s+(\d{1,2}):(\d{2})/);
+      if (!m) return;
+
+      const pgTime = new Date(
+        Number(m[3]), monthMap[m[2].toLowerCase()], Number(m[1]),
+        Number(m[4]), Number(m[5]), 0
+      );
 
       const nextRefresh = new Date(pgTime.getTime() + REFRESH_INTERVAL * 1000);
       const delay = nextRefresh - new Date();
-      const safeDelay = Math.max(delay, 60 * 1000);
 
-      refreshTimer = setTimeout(async () => {
-        await loadLivePrices();
-        scheduleNext();
-      }, safeDelay);
+      if (delay > 0) {
+        refreshTimer = setTimeout(async () => {
+          await loadLivePrices();
+          scheduleNext();
+        }, delay);
+      } else {
+        // Already past due — refresh now then schedule next
+        loadLivePrices().then(scheduleNext);
+      }
     }
 
     scheduleNext();
   }
 
   function manualRefresh() {
-    clearTimeout(refreshTimer);
+    clearInterval(refreshTimer);
     clearInterval(countdownTimer);
-    loadLivePrices().finally(() => startAutoRefresh());
+    loadLivePrices().then(() => startAutoRefresh());
   }
 
-  // Show countdown straight away with fallback data, refresh properly after fetch
-  updateCountdownDisplay();
-  countdownTimer = setInterval(updateCountdownDisplay, 1000);
-  loadLivePrices().finally(() => startAutoRefresh());
+  loadLivePrices().then(() => startAutoRefresh());
 </script>
+<!-- Lightbox -->
+<div class="testi-lightbox" id="testiLightbox" onclick="closeLightbox()">
+  <button class="testi-lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="testiLightboxImg" src="" alt="Testimoni"/>
+</div>
+
 </body>
 </html>
