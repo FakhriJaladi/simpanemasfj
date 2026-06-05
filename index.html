@@ -1688,7 +1688,9 @@ function floor2(num){
     const secsLeft = Math.round((nextRefresh - new Date()) / 1000);
 
     if (secsLeft <= 0) {
-      el.textContent = 'Sedang refresh…';
+      // Past due — show how long since last update
+      const minsSince = Math.abs(Math.floor(secsLeft / 60));
+      el.textContent = `Harga dikemaskini ${minsSince} minit lalu · Menunggu harga baru…`;
       return;
     }
 
