@@ -1731,10 +1731,13 @@ function floor2(num){
   function manualRefresh() {
     clearTimeout(refreshTimer);
     clearInterval(countdownTimer);
-    loadLivePrices().then(() => startAutoRefresh());
+    loadLivePrices().finally(() => startAutoRefresh());
   }
 
-  loadLivePrices().then(() => startAutoRefresh());
+  // Show countdown straight away with fallback data, refresh properly after fetch
+  updateCountdownDisplay();
+  countdownTimer = setInterval(updateCountdownDisplay, 1000);
+  loadLivePrices().finally(() => startAutoRefresh());
 </script>
 </body>
 </html>
