@@ -1695,7 +1695,7 @@ function floor2(num){
   }
 
   function startAutoRefresh() {
-    clearInterval(refreshTimer);
+    clearTimeout(refreshTimer);
     clearInterval(countdownTimer);
 
     updateCountdownDisplay();
@@ -1705,7 +1705,7 @@ function floor2(num){
 
     // Schedule next refresh at PG timestamp + 20 min
     function scheduleNext() {
-      clearInterval(refreshTimer);
+      clearTimeout(refreshTimer);
       const raw = PG_DATA.lastUpdate || '';
       const monthMap = { jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11 };
       const m = raw.match(/(\d{1,2})-([A-Za-z]+)-(\d{4})\s+(\d{1,2}):(\d{2})/);
@@ -1719,22 +1719,20 @@ function floor2(num){
       const nextRefresh = new Date(pgTime.getTime() + REFRESH_INTERVAL * 1000);
       const delay = nextRefresh - new Date();
 
-      if (delay > 0) {
-        refreshTimer = setTimeout(async () => {
-          await loadLivePrices();
-          scheduleNext();
-        }, delay);
-      } else {
-        // Already past due — refresh now then schedule next
-        loadLivePrices().then(scheduleNext);
-      }
+      // Always wait at least 60 seconds before next refresh to avoid tight loops
+      const safeDelay = Math.max(delay, 60 * 1000);
+
+      refreshTimer = setTimeout(async () => {
+        await loadLivePrices();
+        scheduleNext();
+      }, safeDelay);
     }
 
     scheduleNext();
   }
 
   function manualRefresh() {
-    clearInterval(refreshTimer);
+    clearTimeout(refreshTimer);
     clearInterval(countdownTimer);
     loadLivePrices().then(() => startAutoRefresh());
   }
