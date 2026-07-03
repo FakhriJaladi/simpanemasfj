@@ -2048,12 +2048,12 @@ function floor2(num){
 
     const purchaseLabel = topupType === 'first' ? '🆕 Pelanggan Baru' : '✅ Pelanggan Sedia Ada';
 
-    let msg = `Assalamualaikum WASA, saya ingin membuat top up akaun GAP saya.\n\n`;
-    msg += `${purchaseLabel}\n`;
-    msg += `👤 Nama: ${name}\n`;
-    msg += `🔑 ${identifier}\n`;
-    msg += `💰 Jumlah Top Up: RM ${parseFloat(amount).toLocaleString('en-MY')}\n`;
-    msg += `\nMohon bantu proses top up saya. Terima kasih! 🙏`;
+    let msg = `Assalamualaikum WASA, boleh tolong top up akaun GAP saya.\n\n`;
+   
+    msg += `Nama: ${name}\n`;
+    msg += `${identifier}\n`;
+    msg += `Jumlah Top Up: RM ${parseFloat(amount).toLocaleString('en-MY')}\n`;
+    msg += `\nTerima kasih! 🙏`;
 
     window.open(`https://wa.me/6737404040?text=${encodeURIComponent(msg)}`, '_blank');
   }
