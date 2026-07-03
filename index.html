@@ -798,45 +798,161 @@
       margin-bottom: 18px;
     }
 
-    .milestone-grid {
+    /* ── GOAL CARDS ── */
+    .goal-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 14px;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
     }
 
-    .milestone-chip {
+    .goal-chip {
       background: var(--card-deep);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 6px;
-      text-align: center;
+      border-radius: 14px;
+      padding: 14px 12px;
       cursor: pointer;
       transition: all 0.2s;
-      font-family: 'Outfit', sans-serif;
+      text-align: center;
     }
 
-    .milestone-chip:hover { border-color: var(--gold-dim); }
+    .goal-chip:hover { border-color: var(--gold-dim); }
 
-    .milestone-chip.active {
+    .goal-chip.active {
       border-color: var(--gold);
       background: linear-gradient(135deg, var(--milestone-grad-a), var(--milestone-grad-b));
     }
 
-    .milestone-chip-val {
+    .goal-chip-icon { font-size: 26px; margin-bottom: 6px; line-height: 1; }
+
+    .goal-chip-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.5px;
+    }
+
+    /* Goal context banner */
+    .goal-context {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--card-grad-a), var(--card-grad-b));
+      border: 1px solid var(--gold-dim);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 18px;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .goal-context-icon { font-size: 26px; flex-shrink: 0; margin-top: 2px; }
+
+    .goal-context-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 18px;
+      font-size: 16px;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+
+    .goal-context-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── EF PANEL ── */
+    .ef-panel {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .ef-title {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 14px;
+    }
+
+    .ef-row { margin-bottom: 12px; }
+
+    .ef-row label {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    .ef-months { display: flex; gap: 8px; }
+
+    .ef-month-btn {
+      flex: 1;
+      padding: 9px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--card);
+      color: var(--muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ef-month-btn.active {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: linear-gradient(135deg, var(--milestone-grad-a), var(--milestone-grad-b));
+    }
+
+    .ef-result {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .ef-result-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .ef-result-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
       color: var(--gold-light);
       line-height: 1;
     }
 
-    .milestone-chip-label {
-      font-size: 9px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+    .ef-result-sub {
+      font-size: 12px;
       color: var(--muted);
-      margin-top: 3px;
+      margin-top: 4px;
+      margin-bottom: 12px;
     }
+
+    .ef-use-btn {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      border: none;
+      border-radius: 9px;
+      padding: 10px 22px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: #090806;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .ef-use-btn:hover { opacity: 0.9; }
 
     .target-result-box {
       display: none;
@@ -1023,6 +1139,19 @@
 <body>
 
 <!-- ── NAV ── -->
+<script>
+  function showPage(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    if (btn) btn.classList.add('active');
+    if (id === 'testimoni' && typeof testiLoaded !== 'undefined' && !testiLoaded) {
+      testiLoaded = true;
+      if (typeof loadTestimoni === 'function') loadTestimoni();
+    }
+  }
+</script>
+
 <nav class="nav">
   <button class="nav-btn active" onclick="showPage('prices', this)">💰 Harga Emas</button>
   <button class="nav-btn" onclick="showPage('calc', this)">🧮 Kalkulator</button>
@@ -1161,41 +1290,79 @@
 
   <div class="target-wrap">
     <div class="target-card">
-      <div class="target-card-title">🎯 Berapa Target BND Anda?</div>
+      <div class="target-card-title">🎯 Pilih Matlamat Simpanan Anda</div>
 
-      <!-- Quick milestone chips -->
-      <div class="milestone-grid" id="milestoneGrid">
-        <div class="milestone-chip" onclick="setMilestone(500, this)">
-          <div class="milestone-chip-val">$500</div>
-          <div class="milestone-chip-label">Mula</div>
+      <!-- Goal cards -->
+      <div class="goal-grid">
+        <div class="goal-chip" onclick="setGoal(this, 'Dana Kecemasan', '🆘',
+          'Wang tunai dalam bank boleh susut nilainya akibat inflasi. Emas mengekalkan kuasa beli anda — RM yang anda simpan dalam emas hari ini bernilai lebih pada masa hadapan. Dana kecemasan dalam emas memberi anda ketenangan dan perlindungan nilai serentak.')">
+          <div class="goal-chip-icon">🆘</div>
+          <div class="goal-chip-name">Dana Kecemasan</div>
         </div>
-        <div class="milestone-chip" onclick="setMilestone(1000, this)">
-          <div class="milestone-chip-val">$1K</div>
-          <div class="milestone-chip-label">Asas</div>
+        <div class="goal-chip" onclick="setGoal(this, 'Pendidikan Anak', '🎓',
+          'Kos pendidikan meningkat setiap tahun. Wang dalam akaun biasa tidak cukup untuk kejar inflasi pendidikan. Emas tumbuh mengikut nilai pasaran dunia — simpan emas sekarang, dan apabila anak anda bersedia untuk universiti, nilainya sudah jauh lebih tinggi.')">
+          <div class="goal-chip-icon">🎓</div>
+          <div class="goal-chip-name">Pendidikan Anak</div>
         </div>
-        <div class="milestone-chip" onclick="setMilestone(2000, this)">
-          <div class="milestone-chip-val">$2K</div>
-          <div class="milestone-chip-label">Sederhana</div>
+        <div class="goal-chip" onclick="setGoal(this, 'Haji &amp; Umrah', '🕌',
+          'Persediaan untuk Haji dan Umrah memerlukan bertahun-tahun. Simpan dalam emas agar nilai tidak susut semasa menunggu. Emas juga lebih selamat dari turun naik mata wang — kos pakej dalam USD atau SAR tidak akan terasa berat jika anda simpan dalam emas.')">
+          <div class="goal-chip-icon">🕌</div>
+          <div class="goal-chip-name">Haji &amp; Umrah</div>
         </div>
-        <div class="milestone-chip" onclick="setMilestone(5000, this)">
-          <div class="milestone-chip-val">$5K</div>
-          <div class="milestone-chip-label">Mantap</div>
+        <div class="goal-chip" onclick="setGoal(this, 'Deposit Rumah', '🏠',
+          'Deposit rumah memerlukan disiplin tinggi. Emas membantu anda kekalkan nilai simpanan dari terhakis inflasi. Simpan sedikit setiap bulan dalam emas — apabila cukup, tukar kepada wang tunai untuk deposit. Nilai emas berkemungkinan lebih tinggi dari semasa anda mula simpan.')">
+          <div class="goal-chip-icon">🏠</div>
+          <div class="goal-chip-name">Deposit Rumah</div>
         </div>
-        <div class="milestone-chip" onclick="setMilestone(10000, this)">
-          <div class="milestone-chip-val">$10K</div>
-          <div class="milestone-chip-label">Besar</div>
+        <div class="goal-chip" onclick="setGoal(this, 'Majlis Perkahwinan', '💒',
+          'Kos perkahwinan semakin mahal. Simpan dalam emas untuk elak bebanan hutang. Berbanding simpan wang tunai yang nilai susut, emas membantu anda capai sasaran majlis impian tanpa perlu pinjam. Rancang awal, simpan konsisten, sambut majlis tanpa tekanan.')">
+          <div class="goal-chip-icon">💒</div>
+          <div class="goal-chip-name">Perkahwinan</div>
         </div>
-        <div class="milestone-chip" onclick="setMilestone(20000, this)">
-          <div class="milestone-chip-val">$20K</div>
-          <div class="milestone-chip-label">Impian</div>
+        <div class="goal-chip" onclick="setGoal(this, 'Pencen &amp; Bebas Kewangan', '🌴',
+          'Persaraan yang tenang memerlukan aset yang kekal nilainya. Emas terbukti mengekalkan nilai sepanjang zaman — lebih kukuh dari wang kertas. Simpan emas secara konsisten sekarang, dan nikmati kebebasan kewangan apabila tiba masanya untuk berehat.')">
+          <div class="goal-chip-icon">🌴</div>
+          <div class="goal-chip-name">Pencen &amp; Bebas</div>
+        </div>
+      </div>
+
+      <!-- Goal context banner -->
+      <div class="goal-context" id="goalContext" style="display:none;">
+        <div class="goal-context-icon" id="goalContextIcon"></div>
+        <div style="flex:1;">
+          <div class="goal-context-title" id="goalContextTitle"></div>
+          <div class="goal-context-desc" id="goalContextDesc"></div>
+        </div>
+      </div>
+
+      <!-- Emergency fund mini-calculator — shown only for Dana Kecemasan -->
+      <div class="ef-panel" id="efPanel" style="display:none;">
+        <div class="ef-title">🧮 Kira Dana Kecemasan Anda</div>
+        <div class="ef-row">
+          <label>Pendapatan bulanan (BND$)</label>
+          <input type="number" id="efSalary" placeholder="Contoh: 1500" min="1" step="1" oninput="calcEF()"/>
+        </div>
+        <div class="ef-row">
+          <label>Bilangan bulan</label>
+          <div class="ef-months">
+            <button class="ef-month-btn active" onclick="setEFMonths(this, 3)">3 bulan</button>
+            <button class="ef-month-btn" onclick="setEFMonths(this, 4)">4 bulan</button>
+            <button class="ef-month-btn" onclick="setEFMonths(this, 6)">6 bulan</button>
+          </div>
+        </div>
+        <div class="ef-result" id="efResult" style="display:none;">
+          <div class="ef-result-label">Dana Kecemasan Disyorkan</div>
+          <div class="ef-result-val" id="efResultVal">—</div>
+          <div class="ef-result-sub" id="efResultSub">—</div>
+          <button class="ef-use-btn" onclick="useEFResult()">Guna jumlah ini →</button>
         </div>
       </div>
 
       <!-- Custom BND input -->
       <div class="field">
-        <label>Atau masukkan jumlah BND anda sendiri ($)</label>
+        <label>Masukkan jumlah BND target anda ($)</label>
         <input type="number" id="targetBndInput" placeholder="Contoh: 3000" step="1" min="1"
-          oninput="clearMilestones()" onkeydown="if(event.key==='Enter') calcTargetGram()"/>
+          oninput="clearGoals()" onkeydown="if(event.key==='Enter') calcTargetGram()"/>
       </div>
 
       <!-- Duration input -->
@@ -1299,16 +1466,6 @@ function floor2(num){
       { weight: "10 dinar", sell: 26527, buy: 24537, ship: 0,  prem: 80 },
     ],
   };
-
-    // ══════════════════════════════
-  // NAV
-  // ══════════════════════════════
-  function showPage(id, btn) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('page-' + id).classList.add('active');
-    if (btn) btn.classList.add('active');
-  }
 
   // ══════════════════════════════
   // PRICE PAGE
@@ -1707,15 +1864,55 @@ function floor2(num){
   // ══════════════════════════════
   // TARGET GRAM CALCULATOR
   // ══════════════════════════════
-  function setMilestone(val, el) {
-    document.getElementById('targetBndInput').value = val;
-    document.querySelectorAll('.milestone-chip').forEach(c => c.classList.remove('active'));
-    if (el) el.classList.add('active');
-    calcTargetGram();
+  let efMonths = 3;
+
+  function setGoal(el, title, icon, desc) {
+    document.querySelectorAll('.goal-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('goalContextIcon').textContent = icon;
+    document.getElementById('goalContextTitle').textContent = title;
+    document.getElementById('goalContextDesc').textContent = desc;
+    document.getElementById('goalContext').style.display = 'flex';
+
+    const isEF = title === 'Dana Kecemasan';
+    document.getElementById('efPanel').style.display = isEF ? 'block' : 'none';
+    document.getElementById('efResult').style.display = 'none';
+
+    document.getElementById('targetResult').classList.remove('visible');
+    document.getElementById('targetResetBtn').style.display = 'none';
+    document.getElementById('targetBndInput').value = '';
+    if (!isEF) document.getElementById('targetBndInput').focus();
   }
 
-  function clearMilestones() {
-    document.querySelectorAll('.milestone-chip').forEach(c => c.classList.remove('active'));
+  function clearGoals() {
+    document.querySelectorAll('.goal-chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('goalContext').style.display = 'none';
+    document.getElementById('efPanel').style.display = 'none';
+  }
+
+  function setEFMonths(btn, months) {
+    efMonths = months;
+    document.querySelectorAll('.ef-month-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    calcEF();
+  }
+
+  function calcEF() {
+    const salary = parseFloat(document.getElementById('efSalary').value);
+    if (!salary || salary <= 0) { document.getElementById('efResult').style.display = 'none'; return; }
+    const total = salary * efMonths;
+    document.getElementById('efResultVal').textContent = '$ ' + total.toLocaleString('en-BN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById('efResultSub').textContent = `BND $${salary.toLocaleString('en-BN')} × ${efMonths} bulan`;
+    document.getElementById('efResult').style.display = 'block';
+  }
+
+  function useEFResult() {
+    const salary = parseFloat(document.getElementById('efSalary').value);
+    if (!salary) return;
+    const total = Math.ceil(salary * efMonths);
+    document.getElementById('targetBndInput').value = total;
+    document.getElementById('targetBndInput').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    calcTargetGram();
   }
 
   function calcTargetGram() {
@@ -1783,7 +1980,10 @@ function floor2(num){
     document.getElementById('targetResult').classList.remove('visible');
     document.getElementById('targetMonthlyBreakdown').style.display = 'none';
     document.getElementById('targetResetBtn').style.display = 'none';
-    clearMilestones();
+    document.getElementById('efSalary').value = '';
+    document.getElementById('efResult').style.display = 'none';
+    clearGoals();
+  }
   }
 
 
@@ -1826,12 +2026,12 @@ function floor2(num){
 
     const purchaseLabel = topupType === 'first' ? '🆕 Pelanggan Baru' : '✅ Pelanggan Sedia Ada';
 
-    let msg = `Assalamualaikum WASA, Boleh tolong top up akaun GAP saya.\n\n`;
-   
-    msg += `Nama: ${name}\n`;
-    msg += `${identifier}\n`;
+    let msg = `Assalamualaikum WASA, saya ingin membuat top up akaun GAP saya.\n\n`;
+    msg += `${purchaseLabel}\n`;
+    msg += `👤 Nama: ${name}\n`;
+    msg += `🔑 ${identifier}\n`;
     msg += `💰 Jumlah Top Up: RM ${parseFloat(amount).toLocaleString('en-MY')}\n`;
-    msg += `\nTerima kasih! 🙏`;
+    msg += `\nMohon bantu proses top up saya. Terima kasih! 🙏`;
 
     window.open(`https://wa.me/6737404040?text=${encodeURIComponent(msg)}`, '_blank');
   }
