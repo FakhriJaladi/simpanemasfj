@@ -1798,17 +1798,8 @@ function floor2(num){
     document.getElementById('btnFirst').classList.toggle('active', type === 'first');
     document.getElementById('topupPgField').style.display = type === 'existing' ? 'block' : 'none';
     document.getElementById('topupIcField').style.display = type === 'first' ? 'block' : 'none';
+    document.getElementById('topupSaveRow').style.display = type === 'existing' ? 'flex' : 'none';
   }
-
-  // Restore saved details on load
-  (function restoreTopupDetails() {
-    const saved = JSON.parse(localStorage.getItem('topupDetails') || 'null');
-    if (saved) {
-      if (saved.name) document.getElementById('topupName').value = saved.name;
-      if (saved.pg) document.getElementById('topupPg').value = saved.pg;
-      document.getElementById('topupSave').checked = true;
-    }
-  })();
 
   function submitTopUp() {
     const name = document.getElementById('topupName').value.trim();
@@ -1951,6 +1942,14 @@ function floor2(num){
       document.getElementById('page-topup').classList.add('active');
       btn.classList.add('active');
     }
+
+    // Restore saved top up details
+    const saved = JSON.parse(localStorage.getItem('topupDetails') || 'null');
+    if (saved) {
+      if (saved.name) document.getElementById('topupName').value = saved.name;
+      if (saved.pg) document.getElementById('topupPg').value = saved.pg;
+      document.getElementById('topupSave').checked = true;
+    }
   });
 </script>
 <!-- ════════════════════════════════════════════
@@ -1998,8 +1997,8 @@ function floor2(num){
         <input type="number" id="topupAmount" placeholder="Contoh: 300" min="1" step="1"/>
       </div>
 
-      <!-- Save details toggle -->
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+      <!-- Save details toggle — existing customers only -->
+      <div id="topupSaveRow" style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
         <input type="checkbox" id="topupSave" style="width:18px;height:18px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;"/>
         <label for="topupSave" style="font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;cursor:pointer;margin:0;">
           Simpan nama &amp; PG Code di peranti ini untuk kali seterusnya
