@@ -1800,22 +1800,40 @@ function floor2(num){
     document.getElementById('topupIcField').style.display = type === 'first' ? 'block' : 'none';
   }
 
+  // Restore saved details on load
+  (function restoreTopupDetails() {
+    const saved = JSON.parse(localStorage.getItem('topupDetails') || 'null');
+    if (saved) {
+      if (saved.name) document.getElementById('topupName').value = saved.name;
+      if (saved.pg) document.getElementById('topupPg').value = saved.pg;
+      document.getElementById('topupSave').checked = true;
+    }
+  })();
+
   function submitTopUp() {
     const name = document.getElementById('topupName').value.trim();
     const amount = document.getElementById('topupAmount').value.trim();
     const pg = document.getElementById('topupPg').value.trim();
     const ic = document.getElementById('topupIc').value.trim();
+    const save = document.getElementById('topupSave').checked;
 
     if (!name) { alert('Sila masukkan nama penuh anda.'); return; }
     if (topupType === 'existing' && !pg) { alert('Sila masukkan PG Code anda.'); return; }
     if (topupType === 'first' && !ic) { alert('Sila masukkan No. IC / Pasport anda.'); return; }
     if (!amount || parseFloat(amount) <= 0) { alert('Sila masukkan jumlah top up yang sah.'); return; }
 
+    // Save or clear details based on checkbox
+    if (save) {
+      localStorage.setItem('topupDetails', JSON.stringify({ name, pg }));
+    } else {
+      localStorage.removeItem('topupDetails');
+    }
+
     const identifier = topupType === 'first'
       ? `No. IC / Pasport: ${ic}`
       : `PG Code: ${pg}`;
 
-    const purchaseLabel = topupType === 'first' ? '🆕 Pembelian Pertama' : '✅ Pembelian Seterusnya';
+    const purchaseLabel = topupType === 'first' ? '🆕 Pelanggan Baru' : '✅ Pelanggan Sedia Ada';
 
     let msg = `Assalamualaikum WASA, saya ingin membuat top up akaun GAP saya.\n\n`;
     msg += `${purchaseLabel}\n`;
@@ -1951,10 +1969,10 @@ function floor2(num){
 
       <!-- First purchase toggle -->
       <div class="field">
-        <label>Jenis Pembelian</label>
+        <label>Jenis Pelanggan</label>
         <div class="currency-toggle">
-          <button class="currency-btn active" id="btnExisting" onclick="setTopupType('existing')">✅ Pembelian Seterusnya</button>
-          <button class="currency-btn" id="btnFirst" onclick="setTopupType('first')">🆕 Pembelian Pertama</button>
+          <button class="currency-btn active" id="btnExisting" onclick="setTopupType('existing')">✅ Pelanggan Sedia Ada</button>
+          <button class="currency-btn" id="btnFirst" onclick="setTopupType('first')">🆕 Pelanggan Baru</button>
         </div>
       </div>
 
@@ -1963,21 +1981,29 @@ function floor2(num){
         <input type="text" id="topupName" placeholder="Contoh: Ahmad bin Ali"/>
       </div>
 
-      <!-- PG Code — returning customers -->
+      <!-- PG Code — existing customers -->
       <div class="field" id="topupPgField">
         <label>PG Code</label>
         <input type="text" id="topupPg" placeholder="Contoh: PG123456"/>
       </div>
 
-      <!-- IC/Passport — first purchase -->
+      <!-- IC/Passport — new customers -->
       <div class="field" id="topupIcField" style="display:none;">
         <label>No. IC / Pasport</label>
-        <input type="text" id="topupIc" placeholder="Contoh: 010203-12-1234"/>
+        <input type="text" id="topupIc" placeholder="Contoh: 01234567"/>
       </div>
 
       <div class="field">
         <label>Jumlah Top Up (RM)</label>
         <input type="number" id="topupAmount" placeholder="Contoh: 300" min="1" step="1"/>
+      </div>
+
+      <!-- Save details toggle -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+        <input type="checkbox" id="topupSave" style="width:18px;height:18px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;"/>
+        <label for="topupSave" style="font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;cursor:pointer;margin:0;">
+          Simpan nama &amp; PG Code di peranti ini untuk kali seterusnya
+        </label>
       </div>
 
       <button class="btn-gold" onclick="submitTopUp()">📲 Hantar ke WASA →</button>
