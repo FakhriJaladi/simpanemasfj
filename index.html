@@ -2250,7 +2250,7 @@ function floor2(num){
 
   function wtClose() {
     document.getElementById('wtBackdrop').style.display = 'none';
-    localStorage.setItem('wtSeen', '1');
+    localStorage.setItem('wtSeen_v2', '1');
   }
 
   // ══════════════════════════════
@@ -2369,7 +2369,7 @@ function floor2(num){
     }
 
     // Show walkthrough on first visit (including topup link visitors)
-    if (!localStorage.getItem('wtSeen')) {
+    if (!localStorage.getItem('wtSeen_v2')) {
       wtStep = 0;
       wtShow();
     }
@@ -2434,7 +2434,7 @@ function floor2(num){
         <div style="font-size:20px;flex-shrink:0;">⚠️</div>
         <div style="font-size:12px;color:var(--muted);line-height:1.7;">
           <b style="color:var(--gold-dim);display:block;margin-bottom:4px;">Perhatian</b>
-          WASA hanya menerima pembayaran melalui <b style="color:var(--text);">bank BIBD</b> sahaja. Sebagai alternatif, anda juga boleh menggunakan <b style="color:var(--text);">CDM</b>.
+          WASA hanya menerima remittance melalui <b style="color:var(--text);">bank BIBD</b> sahaja. Sebagai alternatif, anda juga boleh menggunakan <b style="color:var(--text);">CDM</b>.
         </div>
       </div>
 
