@@ -1134,6 +1134,117 @@
     }
 
     .social-btn svg { flex-shrink: 0; }
+    /* ── WALKTHROUGH OVERLAY ── */
+    .wt-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .wt-card {
+      background: var(--card);
+      border: 1px solid var(--gold-dim);
+      border-radius: 24px;
+      padding: 32px 28px 24px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+    }
+
+    .wt-step-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .wt-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.2s;
+    }
+
+    .wt-dot.active { background: var(--gold); }
+
+    .wt-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+
+    .wt-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      color: var(--gold-light);
+      margin-bottom: 10px;
+    }
+
+    .wt-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .wt-desc b { color: var(--text); font-weight: 600; }
+
+    .wt-btn-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .wt-btn-back {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .wt-btn-next {
+      flex: 2;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      color: #090806;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .wt-btn-next:hover { opacity: 0.9; }
+
+    .wt-skip {
+      display: block;
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      background: none;
+      border: none;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -1218,7 +1329,7 @@
 
   <div class="disclaimer">
     Harga dalam RM adalah dari <a href="https://www.publicgold.com.my" target="_blank" rel="noopener noreferrer">publicgold.com.my</a>.<br/>
-    Harga dalam BND adalah anggaran sahaja dan boleh berubah mengikut kadar semasa.<br/>
+    Harga BND dikira berdasarkan kadar penukaran yang dipilih.<br/>
     Harga boleh berubah pada bila-bila masa. Semak kadar terkini sebelum transaksi.
   </div>
 </div>
@@ -2048,14 +2159,85 @@ function floor2(num){
 
     const purchaseLabel = topupType === 'first' ? '🆕 Pelanggan Baru' : '✅ Pelanggan Sedia Ada';
 
-    let msg = `Assalamualaikum WASA, boleh tolong top up akaun GAP saya.\n\n`;
-   
-    msg += `Nama: ${name}\n`;
-    msg += `${identifier}\n`;
-    msg += `Jumlah Top Up: RM ${parseFloat(amount).toLocaleString('en-MY')}\n`;
-    msg += `\nTerima kasih! 🙏`;
+    let msg = `Assalamualaikum WASA, saya ingin membuat top up akaun GAP saya.\n\n`;
+    msg += `${purchaseLabel}\n`;
+    msg += `👤 Nama: ${name}\n`;
+    msg += `🔑 ${identifier}\n`;
+    msg += `💰 Jumlah Top Up: RM ${parseFloat(amount).toLocaleString('en-MY')}\n`;
+    msg += `\nMohon bantu proses top up saya. Terima kasih! 🙏`;
 
     window.open(`https://wa.me/6737404040?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+
+  // ══════════════════════════════
+  // WALKTHROUGH
+  // ══════════════════════════════
+  const WT_STEPS = [
+    {
+      icon: '👋',
+      title: 'Selamat Datang!',
+      desc: 'Di sini anda boleh semak harga emas, kira simpanan, dan rancang matlamat kewangan anda — semuanya dalam satu tempat.'
+    },
+    {
+      icon: '💰',
+      title: 'Harga Emas',
+      desc: 'Tab pertama menunjukkan <b>harga emas semasa dalam BND</b> dari Public Gold secara langsung. Harga dikemaskini secara automatik setiap 20 minit.'
+    },
+    {
+      icon: '🧮',
+      title: 'Kalkulator',
+      desc: 'Tab kedua membantu anda <b>merancang pembayaran</b> — kira jumlah remittance yang diperlukan sebelum membuat top up.'
+    },
+    {
+      icon: '🎯',
+      title: 'Target Gram',
+      desc: 'Tab ketiga membantu anda <b>merancang matlamat simpanan</b>. Pilih tujuan anda, masukkan jumlah sasaran, dan lihat berapa gram yang diperlukan.'
+    },
+  ];
+
+  let wtStep = 0;
+
+  function wtShow() {
+    document.getElementById('wtBackdrop').style.display = 'flex';
+    wtRender();
+  }
+
+  function wtRender() {
+    const s = WT_STEPS[wtStep];
+    document.getElementById('wtIcon').textContent = s.icon;
+    document.getElementById('wtTitle').textContent = s.title;
+    document.getElementById('wtDesc').innerHTML = s.desc;
+
+    // Dots
+    WT_STEPS.forEach((_, i) => {
+      document.getElementById('wtDot' + i).classList.toggle('active', i === wtStep);
+    });
+
+    // Buttons
+    const isLast = wtStep === WT_STEPS.length - 1;
+    document.getElementById('wtBack').style.display = wtStep > 0 ? 'block' : 'none';
+    document.getElementById('wtNext').textContent = isLast ? '✅ Faham, Jom Mula!' : 'Seterusnya →';
+  }
+
+  function wtNext() {
+    if (wtStep < WT_STEPS.length - 1) {
+      wtStep++;
+      wtRender();
+    } else {
+      wtClose();
+    }
+  }
+
+  function wtPrev() {
+    if (wtStep > 0) {
+      wtStep--;
+      wtRender();
+    }
+  }
+
+  function wtClose() {
+    document.getElementById('wtBackdrop').style.display = 'none';
+    localStorage.setItem('wtSeen', '1');
   }
 
   // ══════════════════════════════
@@ -2172,6 +2354,11 @@ function floor2(num){
       if (saved.pg) document.getElementById('topupPg').value = saved.pg;
       document.getElementById('topupSave').checked = true;
     }
+
+    // Show walkthrough on first visit
+    if (!localStorage.getItem('wtSeen')) {
+      wtShow();
+    }
   });
 </script>
 <!-- ════════════════════════════════════════════
@@ -2235,6 +2422,28 @@ function floor2(num){
     </div>
   </div>
 
+</div>
+
+<!-- ── WALKTHROUGH OVERLAY ── -->
+<div class="wt-backdrop" id="wtBackdrop" style="display:none;">
+  <div class="wt-card">
+    <div class="wt-step-dots">
+      <div class="wt-dot active" id="wtDot0"></div>
+      <div class="wt-dot" id="wtDot1"></div>
+      <div class="wt-dot" id="wtDot2"></div>
+      <div class="wt-dot" id="wtDot3"></div>
+    </div>
+
+    <div class="wt-icon" id="wtIcon">💰</div>
+    <div class="wt-title" id="wtTitle">Selamat Datang!</div>
+    <div class="wt-desc" id="wtDesc">Ini adalah laman simpan emas <b>Fakhri Jaladi</b>. Beberapa langkah mudah untuk anda mula menggunakannya.</div>
+
+    <div class="wt-btn-row">
+      <button class="wt-btn-back" id="wtBack" onclick="wtPrev()" style="display:none;">← Balik</button>
+      <button class="wt-btn-next" id="wtNext" onclick="wtNext()">Seterusnya →</button>
+    </div>
+    <button class="wt-skip" onclick="wtClose()">Langkau</button>
+  </div>
 </div>
 
 <!-- ── FLOATING SOCIAL BAR ── -->
