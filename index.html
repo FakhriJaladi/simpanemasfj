@@ -1811,13 +1811,13 @@ function floor2(num){
     const gapPrice = PG_DATA.pricePerGram.sell;
     const estGram = (parseFloat(amount) / gapPrice).toFixed(4);
 
-    let msg = `Assalamualaikum Fakhri! Saya ingin membuat top up akaun emas GAP saya.\n\n`;
+    let msg = `Assalamu'alaikum/Hi! Boleh tolong direct top up akaun emas GAP.\n\n`;
     msg += `👤 Nama: ${name}\n`;
     msg += `🔑 ${identifier}\n`;
     msg += `💰 Jumlah Top Up: RM ${parseFloat(amount).toLocaleString('en-MY')}\n`;
     msg += `📊 Anggaran Gram: ~${estGram}g\n`;
     if (note) msg += `📝 Nota: ${note}\n`;
-    msg += `\nSila bantu proses top up saya. Terima kasih! 🙏`;
+    msg += `\nTerima kasih! 🙏`;
 
     const waUrl = `https://wa.me/6737404040?text=${encodeURIComponent(msg)}`;
     window.open(waUrl, '_blank');
