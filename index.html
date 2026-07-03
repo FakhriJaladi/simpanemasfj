@@ -2172,7 +2172,7 @@ function floor2(num){
   // ══════════════════════════════
   // WALKTHROUGH
   // ══════════════════════════════
-  const WT_STEPS = [
+  const WT_BASE_STEPS = [
     {
       icon: '👋',
       title: 'Selamat Datang!',
@@ -2193,12 +2193,16 @@ function floor2(num){
       title: 'Target Gram',
       desc: 'Tab ketiga membantu anda <b>merancang matlamat simpanan</b>. Pilih tujuan anda, masukkan jumlah sasaran, dan lihat berapa gram yang diperlukan.'
     },
-    {
-      icon: '📲',
-      title: 'Top Up Akaun',
-      desc: 'Tab ini membantu anda <b>menghantar permintaan top up</b> terus ke WASA melalui WhatsApp. Isi nama, PG Code, dan jumlah — mesej akan diisi secara automatik untuk anda.'
-    },
   ];
+
+  const WT_TOPUP_STEP = {
+    icon: '📲',
+    title: 'Top Up Akaun',
+    desc: 'Tab ini membantu anda <b>menghantar permintaan top up</b> terus ke WASA melalui WhatsApp. Isi nama, PG Code, dan jumlah — mesej akan diisi secara automatik untuk anda.'
+  };
+
+  const isTopupLink = new URLSearchParams(window.location.search).get('topup') === '1';
+  const WT_STEPS = isTopupLink ? [...WT_BASE_STEPS, WT_TOPUP_STEP] : WT_BASE_STEPS;
 
   let wtStep = 0;
 
@@ -2213,9 +2217,13 @@ function floor2(num){
     document.getElementById('wtTitle').textContent = s.title;
     document.getElementById('wtDesc').innerHTML = s.desc;
 
+    // Hide 5th dot if not topup link
+    document.getElementById('wtDot4').style.display = isTopupLink ? 'block' : 'none';
+
     // Dots
     WT_STEPS.forEach((_, i) => {
-      document.getElementById('wtDot' + i).classList.toggle('active', i === wtStep);
+      const dot = document.getElementById('wtDot' + i);
+      if (dot) dot.classList.toggle('active', i === wtStep);
     });
 
     // Buttons
