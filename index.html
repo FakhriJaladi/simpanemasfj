@@ -947,17 +947,11 @@
     <p class="last-updated" id="autoRefreshStatus" style="margin-top:4px;">—</p>
   </div>
 
-  <!-- Rate Toggle -->
+  <!-- Rate Display -->
   <div class="rate-section">
-    <div class="rate-label">Pilih kadar penukaran</div>
-    <div class="toggle-wrap">
-      <button class="toggle-btn active" id="btnRemit" onclick="setRate('remit')">🏦 Remittance</button>
-      <button class="toggle-btn" id="btnEwallet" onclick="setRate('ewallet')">📱 E-Wallet</button>
-    </div>
     <div class="rate-display">
       <div>Remittance: <b id="remitRateDisplay">3.020</b></div>
       <div>Caj: <b id="remitChargeDisplay">$2.00</b></div>
-      <div>E-Wallet: <b id="ewalletRateDisplay">2.940</b></div>
     </div>
     <div style="margin-top:12px;text-align:center;">
       <button class="btn-outline" onclick="toggleEdit()">✎ Kemaskini Kadar</button>
@@ -967,7 +961,6 @@
       <div class="edit-grid">
         <div class="edit-field"><label>Remittance</label><input type="number" id="inputRemitRate" step="0.001"/></div>
         <div class="edit-field"><label>Caj (BND$)</label><input type="number" id="inputRemitCharge" step="0.01"/></div>
-        <div class="edit-field"><label>E-Wallet</label><input type="number" id="inputEwalletRate" step="0.001"/></div>
       </div>
       <button class="btn-gold" onclick="applyRates()">Simpan &amp; Kira Semula</button>
     </div>
@@ -1001,9 +994,8 @@
       <div class="calc-card-title">⚙️ Kadar Penukaran</div>
       <div class="rates-grid">
         <div class="field"><label>Remittance</label><input type="number" id="cRemitRate" step="0.001" value="3.010"/></div>
-        <div class="field"><label>E-Wallet</label><input type="number" id="cEwalletRate" step="0.001" value="2.940"/></div>
+        <div class="field"><label>Caj Remittance (BND$)</label><input type="number" id="cRemitCharge" step="0.01" value="2"/></div>
       </div>
-      <div class="field"><label>Caj Remittance (BND$)</label><input type="number" id="cRemitCharge" step="0.01" value="2"/></div>
       <div class="divider"></div>
       <div class="calc-card-title">🪙 Target Simpanan GAP</div>
       <div class="field">
@@ -1032,36 +1024,16 @@
   </div>
 
   <div class="result-card" id="calcResult">
-    <div class="methods-split">
-      <div class="method-block" id="cRemitBlock">
-        <div class="winner-badge">✓ Terbaik</div>
-        <div class="method-name">🏦 Remittance</div>
-        <div class="calc-highlight">
-          <div class="calc-highlight-label" id="cr-highlight-label">RM Bersih</div>
-          <div class="calc-highlight-value" id="cr-net">—</div>
-          <div class="calc-highlight-sub"><span id="cr-gram-label">Gram Dapat</span>: <b id="cr-gram">—</b></div>
-        </div>
-        <div class="method-row"><span>Kadar</span><span id="cr-rate">—</span></div>
-        <div class="method-row"><span id="cr-rm-label">RM Dapat</span><span id="cr-gross">—</span></div>
-        <div class="method-row"><span>Caj</span><span id="cr-charge">—</span></div>
+    <div class="method-block" id="cRemitBlock" style="border:none;padding:0;">
+      <div class="method-name">🏦 Remittance</div>
+      <div class="calc-highlight">
+        <div class="calc-highlight-label" id="cr-highlight-label">RM Bersih</div>
+        <div class="calc-highlight-value" id="cr-net">—</div>
+        <div class="calc-highlight-sub"><span id="cr-gram-label">Gram Dapat</span>: <b id="cr-gram">—</b></div>
       </div>
-      <div class="method-block" id="cEwalletBlock">
-        <div class="winner-badge">✓ Terbaik</div>
-        <div class="method-name">📱 E-Wallet</div>
-        <div class="calc-highlight">
-          <div class="calc-highlight-label" id="ce-highlight-label">RM Bersih</div>
-          <div class="calc-highlight-value" id="ce-net">—</div>
-          <div class="calc-highlight-sub"><span id="ce-gram-label">Gram Dapat</span>: <b id="ce-gram">—</b></div>
-        </div>
-        <div class="method-row"><span>Kadar</span><span id="ce-rate">—</span></div>
-        <div class="method-row"><span id="ce-rm-label">RM Dapat</span><span id="ce-gross">—</span></div>
-        <div class="method-row"><span>Caj</span><span id="ce-charge">—</span></div>
-      </div>
-    </div>
-    <div class="verdict">
-      <div class="verdict-label">Cadangan</div>
-      <div class="verdict-text" id="verdictText">—</div>
-      <div class="verdict-sub" id="verdictSub">—</div>
+      <div class="method-row"><span>Kadar</span><span id="cr-rate">—</span></div>
+      <div class="method-row"><span id="cr-rm-label">RM Dapat</span><span id="cr-gross">—</span></div>
+      <div class="method-row"><span>Caj</span><span id="cr-charge">—</span></div>
     </div>
     <button class="btn-reset" onclick="calcReset()">← Kira Semula</button>
   </div>
@@ -1153,13 +1125,11 @@ function floor2(num){
     gapPrice: 627,
     remitRate: 3.060,
     remitCharge: 2.00,
-    ewalletRate: 3.00
   };
 
   const CONFIG = {
     remitRate: SETTINGS.remitRate,
     remitCharge: SETTINGS.remitCharge,
-    ewalletRate: SETTINGS.ewalletRate,
   };
 
   // ══════════════════════════════
@@ -1202,29 +1172,14 @@ function floor2(num){
   // ══════════════════════════════
   // PRICE PAGE
   // ══════════════════════════════
-  let activeRate = 'remit';
-
-  function getRate() {
-    return activeRate === 'remit' ? CONFIG.remitRate : CONFIG.ewalletRate;
-  }
-
   function toBND(rm) {
-    const bnd = rm / getRate();
-    const charge = activeRate === 'remit' ? CONFIG.remitCharge : 0;
-    return floor2(bnd + charge).toFixed(2);
+    return floor2(rm / CONFIG.remitRate).toFixed(2);
   }
 
   function fmtRM(val) { return 'RM ' + Number(val).toLocaleString('en-MY'); }
 
   function fmtBND(val) {
     return '$ ' + parseFloat(val).toLocaleString('en-BN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-
-  function setRate(mode) {
-    activeRate = mode;
-    document.getElementById('btnRemit').classList.toggle('active', mode === 'remit');
-    document.getElementById('btnEwallet').classList.toggle('active', mode === 'ewallet');
-    renderPrices();
   }
 
   function toggleEdit() {
@@ -1234,19 +1189,16 @@ function floor2(num){
     if (hidden) {
       document.getElementById('inputRemitRate').value = CONFIG.remitRate;
       document.getElementById('inputRemitCharge').value = CONFIG.remitCharge;
-      document.getElementById('inputEwalletRate').value = CONFIG.ewalletRate;
     }
   }
 
   function applyRates() {
     const r = parseFloat(document.getElementById('inputRemitRate').value);
     const c = parseFloat(document.getElementById('inputRemitCharge').value);
-    const e = parseFloat(document.getElementById('inputEwalletRate').value);
-    if (!r || !c || !e || r <= 0 || e <= 0 || c < 0) { alert('Masukkan kadar yang sah.'); return; }
-    CONFIG.remitRate = r; CONFIG.remitCharge = c; CONFIG.ewalletRate = e;
+    if (!r || r <= 0 || c < 0) { alert('Masukkan kadar yang sah.'); return; }
+    CONFIG.remitRate = r; CONFIG.remitCharge = c;
     document.getElementById('remitRateDisplay').textContent = r.toFixed(3);
     document.getElementById('remitChargeDisplay').textContent = '$' + floor2(c).toFixed(2);
-    document.getElementById('ewalletRateDisplay').textContent = e.toFixed(3);
     document.getElementById('editPanel').style.display = 'none';
     renderPrices();
   }
@@ -1454,7 +1406,6 @@ function floor2(num){
 
     document.getElementById('mainContent').innerHTML = html;
     document.getElementById('remitRateDisplay').textContent = CONFIG.remitRate.toFixed(3);
-    document.getElementById('ewalletRateDisplay').textContent = CONFIG.ewalletRate.toFixed(3);
     isFirstLoad = false;
   }
 
@@ -1479,11 +1430,10 @@ function floor2(num){
   function calcCompare() {
     const inputVal = parseFloat(document.getElementById('calcAmount').value);
     const remitRate = parseFloat(document.getElementById('cRemitRate').value);
-    const ewalletRate = parseFloat(document.getElementById('cEwalletRate').value);
     const remitCharge = parseFloat(document.getElementById('cRemitCharge').value);
     const gapPrice = PG_DATA.pricePerGram.sell;
 
-    if (!inputVal || inputVal <= 0 || !remitRate || !ewalletRate || remitRate <= 0 || ewalletRate <= 0 || remitCharge < 0) {
+    if (!inputVal || inputVal <= 0 || !remitRate || remitRate <= 0 || remitCharge < 0) {
       alert('Sila masukkan jumlah yang sah.');
       return;
     }
@@ -1492,12 +1442,7 @@ function floor2(num){
       const remitGross = inputVal * remitRate;
       const remitChargeRM = remitCharge * remitRate;
       const remitNet = Math.floor((remitGross - remitChargeRM) * 100) / 100;
-      const ewalletGross = inputVal * ewalletRate;
-      const ewalletNet = Math.floor(ewalletGross * 100) / 100;
-      const remitNetWhole = Math.floor(remitNet);
-      const ewalletNetWhole = Math.floor(ewalletNet);
-      const remitGram = remitNetWhole / gapPrice;
-      const ewalletGram = ewalletNetWhole / gapPrice;
+      const remitGram = Math.floor(remitNet) / gapPrice;
 
       document.getElementById('cr-highlight-label').textContent = 'RM Bersih';
       document.getElementById('cr-net').textContent = 'RM ' + Math.floor(remitNet).toLocaleString('en-MY');
@@ -1508,27 +1453,8 @@ function floor2(num){
       document.getElementById('cr-gram').textContent = remitGram.toFixed(4) + ' g';
       document.getElementById('cr-rm-label').textContent = 'RM Sebelum Caj';
 
-      document.getElementById('ce-highlight-label').textContent = 'RM Bersih';
-      document.getElementById('ce-net').textContent = 'RM ' + Math.floor(ewalletNet).toLocaleString('en-MY');
-      document.getElementById('ce-rate').textContent = ewalletRate.toFixed(3);
-      document.getElementById('ce-gross').textContent = 'RM ' + ewalletGross.toFixed(2);
-      document.getElementById('ce-charge').textContent = 'Tiada';
-      document.getElementById('ce-gram-label').textContent = 'Gram Dapat';
-      document.getElementById('ce-gram').textContent = ewalletGram.toFixed(4) + ' g';
-      document.getElementById('ce-rm-label').textContent = 'RM Sebelum Caj';
-
-      const remitWins = remitNet >= ewalletNet;
-      const diffRM = Math.abs(remitNetWhole - ewalletNetWhole);
-      const diffGram = Math.abs(remitGram - ewalletGram);
-
-      document.getElementById('cRemitBlock').classList.toggle('winner', remitWins);
-      document.getElementById('cEwalletBlock').classList.toggle('winner', !remitWins);
-      document.getElementById('verdictText').textContent = remitWins ? 'Guna Remittance' : 'Guna E-Wallet';
-      document.getElementById('verdictSub').textContent = `Beza RM ${diffRM.toFixed(2)} · lebih kurang ${diffGram.toFixed(4)} g`;
-
     } else {
       const remitBND = (inputVal / remitRate) + remitCharge;
-      const ewalletBND = inputVal / ewalletRate;
       const targetGram = inputVal / gapPrice;
 
       document.getElementById('cr-highlight-label').textContent = 'BND Perlu';
@@ -1539,23 +1465,6 @@ function floor2(num){
       document.getElementById('cr-gram-label').textContent = 'Anggaran Gram';
       document.getElementById('cr-gram').textContent = targetGram.toFixed(4) + ' g';
       document.getElementById('cr-rm-label').textContent = 'RM Target';
-
-      document.getElementById('ce-highlight-label').textContent = 'BND Perlu';
-      document.getElementById('ce-net').textContent = fmtBNDc(ewalletBND);
-      document.getElementById('ce-rate').textContent = ewalletRate.toFixed(3);
-      document.getElementById('ce-gross').textContent = 'RM ' + inputVal.toFixed(2);
-      document.getElementById('ce-charge').textContent = 'Tiada';
-      document.getElementById('ce-gram-label').textContent = 'Anggaran Gram';
-      document.getElementById('ce-gram').textContent = targetGram.toFixed(4) + ' g';
-      document.getElementById('ce-rm-label').textContent = 'RM Target';
-
-      const remitWins = remitBND <= ewalletBND;
-      const diff = Math.abs(remitBND - ewalletBND);
-
-      document.getElementById('cRemitBlock').classList.toggle('winner', remitWins);
-      document.getElementById('cEwalletBlock').classList.toggle('winner', !remitWins);
-      document.getElementById('verdictText').textContent = remitWins ? 'Guna Remittance' : 'Guna E-Wallet';
-      document.getElementById('verdictSub').textContent = `Jimat ${fmtBNDc(diff)} · anggaran ${targetGram.toFixed(4)} g`;
     }
 
     document.getElementById('calcInputCard').style.display = 'block';
@@ -1567,7 +1476,6 @@ function floor2(num){
     const gram = parseFloat(document.getElementById('calcTargetGram').value);
     const gapPrice = PG_DATA.pricePerGram.sell;
     const remitRate = parseFloat(document.getElementById('cRemitRate').value) || CONFIG.remitRate;
-    const ewalletRate = parseFloat(document.getElementById('cEwalletRate').value) || CONFIG.ewalletRate;
     const remitCharge = parseFloat(document.getElementById('cRemitCharge').value) || CONFIG.remitCharge;
 
     if (!gram || gram <= 0 || !gapPrice || gapPrice <= 0) {
@@ -1577,16 +1485,11 @@ function floor2(num){
 
     const rmExact = gram * gapPrice;
     const rmRoundedUp = Math.ceil(rmExact);
-
     const remitBnd = (rmRoundedUp / remitRate) + remitCharge;
-    const ewalletBnd = rmRoundedUp / ewalletRate;
-
-    const bestMethod = remitBnd <= ewalletBnd ? 'Remittance' : 'E-Wallet';
-    const bestBnd = remitBnd <= ewalletBnd ? remitBnd : ewalletBnd;
 
     document.getElementById('gramRmRM').textContent = 'RM ' + rmRoundedUp.toLocaleString('en-MY');
     document.getElementById('gramRmNote').textContent = `${gram.toFixed(4)} g × RM ${gapPrice.toFixed(2)}`;
-    document.getElementById('gramRmBnd').textContent = `Anggaran ${bestMethod}: ${fmtBNDc(bestBnd)}`;
+    document.getElementById('gramRmBnd').textContent = `Anggaran Remittance: ${fmtBNDc(remitBnd)}`;
     document.getElementById('gramRmResult').style.display = 'block';
   }
 
@@ -1595,7 +1498,6 @@ function floor2(num){
     document.getElementById('calcInputCard').style.display = 'block';
     document.getElementById('calcResult').classList.remove('visible');
     document.getElementById('cRemitBlock').classList.remove('winner');
-    document.getElementById('cEwalletBlock').classList.remove('winner');
   }
 
   // ══════════════════════════════
