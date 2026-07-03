@@ -1913,9 +1913,15 @@ function floor2(num){
     loadLivePrices().finally(() => startAutoRefresh());
   }
 
-  // Show Top Up tab only if URL contains ?topup=1
+  // Show Top Up tab and navigate to it if URL contains ?topup=1
   if (new URLSearchParams(window.location.search).get('topup') === '1') {
-    document.getElementById('navTopUp').style.display = '';
+    const btn = document.getElementById('navTopUp');
+    btn.style.display = '';
+    // Navigate directly to top up tab
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-topup').classList.add('active');
+    btn.classList.add('active');
   }
 
   // Show countdown straight away with fallback data, refresh properly after fetch
