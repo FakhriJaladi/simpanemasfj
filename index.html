@@ -1258,6 +1258,115 @@
       border: none;
       text-decoration: underline;
     }
+    /* ── TESTIMONI PAGE ── */
+    .testi-wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 16px 32px;
+    }
+
+    .testi-section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .galeri-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .galeri-img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: block;
+      cursor: pointer;
+      object-fit: cover;
+      aspect-ratio: 1;
+      background: var(--card2);
+      transition: opacity 0.2s;
+    }
+
+    .galeri-img:hover { opacity: 0.85; }
+
+    .testi-item { margin-bottom: 16px; }
+
+    .testi-img {
+      width: 100%;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      display: block;
+      cursor: pointer;
+      background: var(--card2);
+    }
+
+    .testi-empty {
+      text-align: center;
+      padding: 32px 20px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .testi-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .testi-lightbox.open { display: flex; }
+
+    .testi-lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+
+    .testi-lightbox-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      font-size: 28px;
+      color: #fff;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    .testi-loading {
+      text-align: center;
+      padding: 32px 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .testi-spinner {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -1280,6 +1389,7 @@
   <button class="nav-btn active" onclick="showPage('prices', this)">💰 Harga Emas</button>
   <button class="nav-btn" onclick="showPage('calc', this)">🧮 Kalkulator</button>
   <button class="nav-btn" onclick="showPage('target', this)">🎯 Target Gram</button>
+  <button class="nav-btn" onclick="showPage('testimoni', this)">⭐ Testimoni</button>
   <button class="nav-btn" id="navTopUp" onclick="showPage('topup', this)" style="display:none;">📲 Top Up</button>
   <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Tukar tema">🌙</button>
 </nav>
@@ -2203,6 +2313,11 @@ function floor2(num){
       title: 'Target Gram',
       desc: 'Tab ketiga membantu anda <b>merancang matlamat simpanan</b>. Pilih tujuan anda, masukkan jumlah sasaran, dan lihat berapa gram yang diperlukan.'
     },
+    {
+      icon: '⭐',
+      title: 'Testimoni',
+      desc: 'Tab keempat menunjukkan <b>gambar penghantaran emas</b> dan perkongsian pelanggan kami. Bukti nyata simpanan emas bersama Fakhri Jaladi.'
+    },
   ];
 
   const WT_TOPUP_STEP = {
@@ -2227,8 +2342,8 @@ function floor2(num){
     document.getElementById('wtTitle').textContent = s.title;
     document.getElementById('wtDesc').innerHTML = s.desc;
 
-    // Hide 5th dot if not topup link
-    document.getElementById('wtDot4').style.display = isTopupLink ? 'block' : 'none';
+    // Hide topup dot (5th) if not topup link — it's always the last
+    document.getElementById('wtDot5').style.display = isTopupLink ? 'block' : 'none';
 
     // Dots
     WT_STEPS.forEach((_, i) => {
@@ -2261,6 +2376,55 @@ function floor2(num){
   function wtClose() {
     document.getElementById('wtBackdrop').style.display = 'none';
     localStorage.setItem('wtSeen_v2', '1');
+  }
+
+  // ══════════════════════════════
+  // TESTIMONI
+  // ══════════════════════════════
+  let testiLoaded = false;
+  const formats = ['jpg', 'jpeg', 'png', 'webp'];
+
+  async function loadTestimoni() {
+    const list = document.getElementById('testiList');
+    const imgs = [];
+
+    for (let i = 1; i <= 50; i++) {
+      const n = String(i).padStart(2, '0');
+      let found = null;
+      for (const ext of formats) {
+        const src = `/testimoni/testi-${n}.${ext}`;
+        const ok = await new Promise(resolve => {
+          const img = new Image();
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(false);
+          img.src = src;
+        });
+        if (ok) { found = src; break; }
+      }
+      if (!found) break;
+      imgs.push(found);
+    }
+
+    if (!imgs.length) {
+      list.innerHTML = `<div class="testi-empty">Belum ada testimoni lagi.<br/>Nantikan perkongsian dari pelanggan kami! 🌟</div>`;
+      return;
+    }
+
+    list.innerHTML = imgs.map((src, i) => `
+      <div class="testi-item" style="animation-delay:${i * 0.08}s">
+        <img class="testi-img" src="${src}" alt="Testimoni ${i+1}"
+          loading="lazy" onclick="openLightbox('${src}')"/>
+      </div>
+    `).join('');
+  }
+
+  function openLightbox(src) {
+    document.getElementById('testiLightboxImg').src = src;
+    document.getElementById('testiLightbox').classList.add('open');
+  }
+
+  function closeLightbox() {
+    document.getElementById('testiLightbox').classList.remove('open');
   }
 
   // ══════════════════════════════
@@ -2465,6 +2629,7 @@ function floor2(num){
       <div class="wt-dot" id="wtDot2"></div>
       <div class="wt-dot" id="wtDot3"></div>
       <div class="wt-dot" id="wtDot4"></div>
+      <div class="wt-dot" id="wtDot5"></div>
     </div>
 
     <div class="wt-icon" id="wtIcon">💰</div>
@@ -2477,6 +2642,39 @@ function floor2(num){
     </div>
     <button class="wt-skip" onclick="wtClose()">Tutup</button>
   </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE 5 — TESTIMONI
+════════════════════════════════════════════ -->
+<div class="page" id="page-testimoni">
+
+  <div class="header">
+    <div class="tag">Simpan Emas Fakhri Jaladi</div>
+    <h1>Testimoni<br/><em>Penyimpan Emas</em></h1>
+  </div>
+
+  <div class="testi-wrap">
+
+    <div class="testi-section-title">⭐ Perkongsian Pelanggan</div>
+    <div id="testiList">
+      <div class="testi-loading">
+        <div class="testi-spinner"></div>
+        Memuatkan testimoni…
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:24px 0 8px;font-size:12px;color:var(--muted);line-height:1.7;">
+      Ingin berkongsi pengalaman anda?<br/>Hubungi Fakhri untuk menambah testimoni anda di sini.
+    </div>
+
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="testi-lightbox" id="testiLightbox" onclick="closeLightbox()">
+  <button class="testi-lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="testiLightboxImg" src="" alt="Testimoni"/>
 </div>
 
 <!-- ── FLOATING SOCIAL BAR ── -->
