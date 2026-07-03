@@ -1294,33 +1294,27 @@
 
       <!-- Goal cards -->
       <div class="goal-grid">
-        <div class="goal-chip" onclick="setGoal(this, 'Dana Kecemasan', '🆘',
-          'Wang tunai dalam bank boleh susut nilainya akibat inflasi. Emas mengekalkan kuasa beli anda — RM yang anda simpan dalam emas hari ini bernilai lebih pada masa hadapan. Dana kecemasan dalam emas memberi anda ketenangan dan perlindungan nilai serentak.')">
+        <div class="goal-chip" onclick="setGoal(this, 'kecemasan')">
           <div class="goal-chip-icon">🆘</div>
           <div class="goal-chip-name">Dana Kecemasan</div>
         </div>
-        <div class="goal-chip" onclick="setGoal(this, 'Pendidikan Anak', '🎓',
-          'Kos pendidikan meningkat setiap tahun. Wang dalam akaun biasa tidak cukup untuk kejar inflasi pendidikan. Emas tumbuh mengikut nilai pasaran dunia — simpan emas sekarang, dan apabila anak anda bersedia untuk universiti, nilainya sudah jauh lebih tinggi.')">
+        <div class="goal-chip" onclick="setGoal(this, 'pendidikan')">
           <div class="goal-chip-icon">🎓</div>
           <div class="goal-chip-name">Pendidikan Anak</div>
         </div>
-        <div class="goal-chip" onclick="setGoal(this, 'Haji &amp; Umrah', '🕌',
-          'Persediaan untuk Haji dan Umrah memerlukan bertahun-tahun. Simpan dalam emas agar nilai tidak susut semasa menunggu. Emas juga lebih selamat dari turun naik mata wang — kos pakej dalam USD atau SAR tidak akan terasa berat jika anda simpan dalam emas.')">
+        <div class="goal-chip" onclick="setGoal(this, 'haji')">
           <div class="goal-chip-icon">🕌</div>
           <div class="goal-chip-name">Haji &amp; Umrah</div>
         </div>
-        <div class="goal-chip" onclick="setGoal(this, 'Deposit Rumah', '🏠',
-          'Deposit rumah memerlukan disiplin tinggi. Emas membantu anda kekalkan nilai simpanan dari terhakis inflasi. Simpan sedikit setiap bulan dalam emas — apabila cukup, tukar kepada wang tunai untuk deposit. Nilai emas berkemungkinan lebih tinggi dari semasa anda mula simpan.')">
+        <div class="goal-chip" onclick="setGoal(this, 'rumah')">
           <div class="goal-chip-icon">🏠</div>
           <div class="goal-chip-name">Deposit Rumah</div>
         </div>
-        <div class="goal-chip" onclick="setGoal(this, 'Majlis Perkahwinan', '💒',
-          'Kos perkahwinan semakin mahal. Simpan dalam emas untuk elak bebanan hutang. Berbanding simpan wang tunai yang nilai susut, emas membantu anda capai sasaran majlis impian tanpa perlu pinjam. Rancang awal, simpan konsisten, sambut majlis tanpa tekanan.')">
+        <div class="goal-chip" onclick="setGoal(this, 'kahwin')">
           <div class="goal-chip-icon">💒</div>
           <div class="goal-chip-name">Perkahwinan</div>
         </div>
-        <div class="goal-chip" onclick="setGoal(this, 'Pencen &amp; Bebas Kewangan', '🌴',
-          'Persaraan yang tenang memerlukan aset yang kekal nilainya. Emas terbukti mengekalkan nilai sepanjang zaman — lebih kukuh dari wang kertas. Simpan emas secara konsisten sekarang, dan nikmati kebebasan kewangan apabila tiba masanya untuk berehat.')">
+        <div class="goal-chip" onclick="setGoal(this, 'pencen')">
           <div class="goal-chip-icon">🌴</div>
           <div class="goal-chip-name">Pencen &amp; Bebas</div>
         </div>
@@ -1864,17 +1858,28 @@ function floor2(num){
   // ══════════════════════════════
   // TARGET GRAM CALCULATOR
   // ══════════════════════════════
+  const GOALS = {
+    kecemasan: { title: 'Dana Kecemasan', icon: '🆘', desc: 'Wang tunai dalam bank boleh susut nilainya akibat inflasi. Emas mengekalkan kuasa beli anda — RM yang anda simpan dalam emas hari ini bernilai lebih pada masa hadapan. Dana kecemasan dalam emas memberi anda ketenangan dan perlindungan nilai serentak.' },
+    pendidikan: { title: 'Pendidikan Anak', icon: '🎓', desc: 'Kos pendidikan meningkat setiap tahun. Wang dalam akaun biasa tidak cukup untuk kejar inflasi pendidikan. Emas tumbuh mengikut nilai pasaran dunia — simpan emas sekarang, dan apabila anak anda bersedia untuk universiti, nilainya sudah jauh lebih tinggi.' },
+    haji:       { title: 'Haji & Umrah', icon: '🕌', desc: 'Persediaan untuk Haji dan Umrah memerlukan bertahun-tahun. Simpan dalam emas agar nilai tidak susut semasa menunggu. Emas juga lebih selamat dari turun naik mata wang — kos pakej dalam USD atau SAR tidak akan terasa berat jika anda simpan dalam emas.' },
+    rumah:      { title: 'Deposit Rumah', icon: '🏠', desc: 'Deposit rumah memerlukan disiplin tinggi. Emas membantu anda kekalkan nilai simpanan dari terhakis inflasi. Simpan sedikit setiap bulan dalam emas — apabila cukup, tukar kepada wang tunai untuk deposit. Nilai emas berkemungkinan lebih tinggi dari semasa anda mula simpan.' },
+    kahwin:     { title: 'Majlis Perkahwinan', icon: '💒', desc: 'Kos perkahwinan semakin mahal. Simpan dalam emas untuk elak bebanan hutang. Berbanding simpan wang tunai yang nilai susut, emas membantu anda capai sasaran majlis impian tanpa perlu pinjam. Rancang awal, simpan konsisten, sambut majlis tanpa tekanan.' },
+    pencen:     { title: 'Pencen & Bebas Kewangan', icon: '🌴', desc: 'Persaraan yang tenang memerlukan aset yang kekal nilainya. Emas terbukti mengekalkan nilai sepanjang zaman — lebih kukuh dari wang kertas. Simpan emas secara konsisten sekarang, dan nikmati kebebasan kewangan apabila tiba masanya untuk berehat.' },
+  };
+
   let efMonths = 3;
 
-  function setGoal(el, title, icon, desc) {
+  function setGoal(el, key) {
+    const goal = GOALS[key];
+    if (!goal) return;
     document.querySelectorAll('.goal-chip').forEach(c => c.classList.remove('active'));
     el.classList.add('active');
-    document.getElementById('goalContextIcon').textContent = icon;
-    document.getElementById('goalContextTitle').textContent = title;
-    document.getElementById('goalContextDesc').textContent = desc;
+    document.getElementById('goalContextIcon').textContent = goal.icon;
+    document.getElementById('goalContextTitle').textContent = goal.title;
+    document.getElementById('goalContextDesc').textContent = goal.desc;
     document.getElementById('goalContext').style.display = 'flex';
 
-    const isEF = title === 'Dana Kecemasan';
+    const isEF = key === 'kecemasan';
     document.getElementById('efPanel').style.display = isEF ? 'block' : 'none';
     document.getElementById('efResult').style.display = 'none';
 
