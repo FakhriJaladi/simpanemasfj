@@ -957,12 +957,30 @@
       <button class="btn-outline" onclick="toggleEdit()">✎ Kemaskini Kadar</button>
     </div>
     <div class="edit-panel" id="editPanel">
-      <div class="edit-panel-title">⚙ Tetapan Kadar</div>
-      <div class="edit-grid">
-        <div class="edit-field"><label>Remittance</label><input type="number" id="inputRemitRate" step="0.001"/></div>
-        <div class="edit-field"><label>Caj (BND$)</label><input type="number" id="inputRemitCharge" step="0.01"/></div>
+      <div class="edit-panel-title">🔐 Admin — Kemaskini Kadar</div>
+
+      <!-- Step 1: Password -->
+      <div id="adminAuthStep">
+        <div class="edit-field" style="margin-bottom:12px;">
+          <label>Kata Laluan Admin</label>
+          <input type="password" id="adminPassword" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter') verifyAdminPassword()"/>
+        </div>
+        <button class="btn-gold" onclick="verifyAdminPassword()">Masuk →</button>
+        <div id="adminAuthError" style="display:none;color:#e07a5f;font-size:12px;margin-top:8px;">
+          Kata laluan salah. Cuba lagi.
+        </div>
       </div>
-      <button class="btn-gold" onclick="applyRates()">Simpan &amp; Kira Semula</button>
+
+      <!-- Step 2: Rate inputs (shown after password verified) -->
+      <div id="adminRateStep" style="display:none;">
+        <div class="edit-grid">
+          <div class="edit-field"><label>Remittance</label><input type="number" id="inputRemitRate" step="0.001"/></div>
+          <div class="edit-field"><label>Caj (BND$)</label><input type="number" id="inputRemitCharge" step="0.01"/></div>
+        </div>
+        <button class="btn-gold" onclick="saveRatesToGitHub()">💾 Simpan &amp; Sebar →</button>
+        <div id="adminSaveStatus" style="font-size:12px;margin-top:10px;line-height:1.6;"></div>
+      </div>
     </div>
   </div>
 
@@ -991,12 +1009,6 @@
 
   <div class="calc-wrap" id="calcInputCard">
     <div class="calc-card">
-      <div class="calc-card-title">⚙️ Kadar Penukaran</div>
-      <div class="rates-grid">
-        <div class="field"><label>Remittance</label><input type="number" id="cRemitRate" step="0.001" value="3.010"/></div>
-        <div class="field"><label>Caj Remittance (BND$)</label><input type="number" id="cRemitCharge" step="0.01" value="2"/></div>
-      </div>
-      <div class="divider"></div>
       <div class="calc-card-title">🪙 Target Simpanan GAP</div>
       <div class="field">
         <label>Berapa gram mau disimpan?</label>
@@ -1173,7 +1185,7 @@ function floor2(num){
   // PRICE PAGE
   // ══════════════════════════════
   function toBND(rm) {
-    return floor2(rm / CONFIG.remitRate).toFixed(2);
+    return floor2((rm / CONFIG.remitRate) + CONFIG.remitCharge).toFixed(2);
   }
 
   function fmtRM(val) { return 'RM ' + Number(val).toLocaleString('en-MY'); }
@@ -1187,20 +1199,70 @@ function floor2(num){
     const hidden = panel.style.display === 'none' || panel.style.display === '';
     panel.style.display = hidden ? 'block' : 'none';
     if (hidden) {
-      document.getElementById('inputRemitRate').value = CONFIG.remitRate;
-      document.getElementById('inputRemitCharge').value = CONFIG.remitCharge;
+      // Reset to auth step each time panel opens
+      document.getElementById('adminAuthStep').style.display = 'block';
+      document.getElementById('adminRateStep').style.display = 'none';
+      document.getElementById('adminAuthError').style.display = 'none';
+      document.getElementById('adminPassword').value = '';
+      document.getElementById('adminSaveStatus').textContent = '';
     }
   }
 
-  function applyRates() {
+  function verifyAdminPassword() {
+    const pw = document.getElementById('adminPassword').value;
+    // Password is checked server-side — we just pass it along
+    // Pre-fill current rates and show rate step
+    if (!pw) { document.getElementById('adminAuthError').style.display = 'block'; return; }
+    document.getElementById('adminAuthError').style.display = 'none';
+    document.getElementById('inputRemitRate').value = CONFIG.remitRate;
+    document.getElementById('inputRemitCharge').value = CONFIG.remitCharge;
+    document.getElementById('adminAuthStep').style.display = 'none';
+    document.getElementById('adminRateStep').style.display = 'block';
+  }
+
+  async function saveRatesToGitHub() {
+    const pw = document.getElementById('adminPassword').value;
     const r = parseFloat(document.getElementById('inputRemitRate').value);
     const c = parseFloat(document.getElementById('inputRemitCharge').value);
-    if (!r || r <= 0 || c < 0) { alert('Masukkan kadar yang sah.'); return; }
-    CONFIG.remitRate = r; CONFIG.remitCharge = c;
-    document.getElementById('remitRateDisplay').textContent = r.toFixed(3);
-    document.getElementById('remitChargeDisplay').textContent = '$' + floor2(c).toFixed(2);
-    document.getElementById('editPanel').style.display = 'none';
-    renderPrices();
+    const statusEl = document.getElementById('adminSaveStatus');
+
+    if (!r || r <= 0 || c < 0) { statusEl.textContent = '⚠️ Masukkan kadar yang sah.'; return; }
+
+    statusEl.style.color = 'var(--muted)';
+    statusEl.textContent = '⏳ Menyimpan kadar...';
+
+    try {
+      const res = await fetch('/api/update-rates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw, remitRate: r, remitCharge: c })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        statusEl.style.color = '#e07a5f';
+        statusEl.textContent = '❌ ' + (data.error || 'Gagal menyimpan.');
+        return;
+      }
+
+      // Apply locally immediately
+      CONFIG.remitRate = r;
+      CONFIG.remitCharge = c;
+      document.getElementById('remitRateDisplay').textContent = r.toFixed(3);
+      document.getElementById('remitChargeDisplay').textContent = '$' + c.toFixed(2);
+      renderPrices();
+
+      statusEl.style.color = 'var(--green)';
+      statusEl.textContent = '✅ Berjaya! Vercel sedang deploy semula (~30 saat). Semua pengguna akan nampak kadar baru.';
+
+      setTimeout(() => {
+        document.getElementById('editPanel').style.display = 'none';
+      }, 4000);
+
+    } catch (err) {
+      statusEl.style.color = '#e07a5f';
+      statusEl.textContent = '❌ Ralat sambungan: ' + err.message;
+    }
   }
 
   let isFirstLoad = true;
@@ -1262,6 +1324,19 @@ function floor2(num){
   }
 
   async function loadLivePrices() {
+    // Fetch admin-set rates first
+    try {
+      const ratesRes = await fetch('/rates.json', { cache: 'no-store' });
+      if (ratesRes.ok) {
+        const rates = await ratesRes.json();
+        if (rates.remitRate) CONFIG.remitRate = rates.remitRate;
+        if (rates.remitCharge !== undefined) CONFIG.remitCharge = rates.remitCharge;
+        document.getElementById('remitRateDisplay').textContent = CONFIG.remitRate.toFixed(3);
+        document.getElementById('remitChargeDisplay').textContent = '$' + CONFIG.remitCharge.toFixed(2);
+      }
+    } catch (e) { /* use SETTINGS fallback */ }
+
+    // Then fetch live gold prices
     try {
       const res = await fetch('/api/prices', { cache: 'no-store' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -1429,8 +1504,8 @@ function floor2(num){
 
   function calcCompare() {
     const inputVal = parseFloat(document.getElementById('calcAmount').value);
-    const remitRate = parseFloat(document.getElementById('cRemitRate').value);
-    const remitCharge = parseFloat(document.getElementById('cRemitCharge').value);
+    const remitRate = CONFIG.remitRate;
+    const remitCharge = CONFIG.remitCharge;
     const gapPrice = PG_DATA.pricePerGram.sell;
 
     if (!inputVal || inputVal <= 0 || !remitRate || remitRate <= 0 || remitCharge < 0) {
@@ -1475,8 +1550,8 @@ function floor2(num){
   function calcGramToRM() {
     const gram = parseFloat(document.getElementById('calcTargetGram').value);
     const gapPrice = PG_DATA.pricePerGram.sell;
-    const remitRate = parseFloat(document.getElementById('cRemitRate').value) || CONFIG.remitRate;
-    const remitCharge = parseFloat(document.getElementById('cRemitCharge').value) || CONFIG.remitCharge;
+    const remitRate = CONFIG.remitRate;
+    const remitCharge = CONFIG.remitCharge;
 
     if (!gram || gram <= 0 || !gapPrice || gapPrice <= 0) {
       alert('Masukkan jumlah gram yang sah.');
