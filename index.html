@@ -1961,7 +1961,7 @@ function floor2(num){
 
     document.getElementById('gramRmRM').textContent = 'RM ' + rmRoundedUp.toLocaleString('en-MY');
     document.getElementById('gramRmNote').textContent = `${gram.toFixed(4)} g × RM ${gapPrice.toFixed(2)}`;
-    document.getElementById('gramRmBnd').textContent = `Anggaran BND: ${fmtBNDc(remitBnd)}`;
+    document.getElementById('gramRmBnd').textContent = `Anggaran Remittance: ${fmtBNDc(remitBnd)}`;
     document.getElementById('gramRmResult').style.display = 'block';
   }
 
@@ -2157,14 +2157,11 @@ function floor2(num){
       ? `No. IC / Pasport: ${ic}`
       : `PG Code: ${pg}`;
 
-    const purchaseLabel = topupType === 'first' ? '🆕 Pelanggan Baru' : '✅ Pelanggan Sedia Ada';
-
     let msg = `Assalamualaikum/Hi, boleh tolong top up akaun GAP saya.\n\n`;
-    
     msg += `Nama: ${name}\n`;
     msg += `${identifier}\n`;
     msg += `Jumlah Top Up: RM ${parseFloat(amount).toLocaleString('en-MY')}\n`;
-    msg += `\nTerima kasih! 🙏`;
+    msg += `\nTerima kasih!`;
 
     window.open(`https://wa.me/6737404040?text=${encodeURIComponent(msg)}`, '_blank');
   }
