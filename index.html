@@ -1782,44 +1782,22 @@ function floor2(num){
   // ══════════════════════════════
   // TOP UP
   // ══════════════════════════════
-  let customerType = 'new';
-
-  function setCustomerType(type) {
-    customerType = type;
-    document.getElementById('btnNew').classList.toggle('active', type === 'new');
-    document.getElementById('btnExisting').classList.toggle('active', type === 'existing');
-    document.getElementById('topupIcField').style.display = type === 'new' ? 'block' : 'none';
-    document.getElementById('topupPgField').style.display = type === 'existing' ? 'block' : 'none';
-  }
-
   function submitTopUp() {
     const name = document.getElementById('topupName').value.trim();
-    const amount = document.getElementById('topupAmount').value.trim();
-    const ic = document.getElementById('topupIc').value.trim();
     const pg = document.getElementById('topupPg').value.trim();
-    const note = document.getElementById('topupNote').value.trim();
+    const amount = document.getElementById('topupAmount').value.trim();
 
     if (!name) { alert('Sila masukkan nama penuh anda.'); return; }
+    if (!pg) { alert('Sila masukkan PG Code anda.'); return; }
     if (!amount || parseFloat(amount) <= 0) { alert('Sila masukkan jumlah top up yang sah.'); return; }
-    if (customerType === 'new' && !ic) { alert('Sila masukkan No. IC anda.'); return; }
-    if (customerType === 'existing' && !pg) { alert('Sila masukkan PG Code anda.'); return; }
 
-    const identifier = customerType === 'new'
-      ? `No. IC: ${ic}`
-      : `PG Code: ${pg}`;
-
-    const gapPrice = PG_DATA.pricePerGram.sell;
-    const estGram = (parseFloat(amount) / gapPrice).toFixed(4);
-
-    let msg = `Assalamu'alaikum/Hi! Boleh tolong direct top up akaun emas GAP.\n\n`;
-    msg += `Nama: ${name}\n`;
-    msg += `${identifier}\n`;
+    let msg = `Assalamualaikum WASA, saya ingin membuat top up akaun GAP saya.\n\n`;
+    msg += `👤 Nama: ${name}\n`;
+    msg += `🔑 PG Code: ${pg}\n`;
     msg += `💰 Jumlah Top Up: RM ${parseFloat(amount).toLocaleString('en-MY')}\n`;
-    if (note) msg += `📝 Note: ${note}\n`;
-    msg += `\nTerima kasih! 🙏`;
+    msg += `\nMohon bantu proses top up saya. Terima kasih! 🙏`;
 
-    const waUrl = `https://wa.me/6737404040?text=${encodeURIComponent(msg)}`;
-    window.open(waUrl, '_blank');
+    window.open(`https://wa.me/6737404040?text=${encodeURIComponent(msg)}`, '_blank');
   }
 
   // ══════════════════════════════
@@ -1941,56 +1919,30 @@ function floor2(num){
   </div>
 
   <div class="topup-wrap">
-
     <div class="topup-card">
       <div class="topup-card-title">📋 Maklumat Top Up</div>
 
-      <!-- Customer type toggle -->
-      <div class="field">
-        <label>Jenis Pelanggan</label>
-        <div class="currency-toggle">
-          <button class="currency-btn active" id="btnNew" onclick="setCustomerType('new')">🆕 Pelanggan Baru</button>
-          <button class="currency-btn" id="btnExisting" onclick="setCustomerType('existing')">✅ Pelanggan Sedia Ada</button>
-        </div>
-      </div>
-
-      <!-- Name -->
       <div class="field">
         <label>Nama Penuh</label>
         <input type="text" id="topupName" placeholder="Contoh: Ahmad bin Ali"/>
       </div>
 
-      <!-- IC — new customers only -->
-      <div class="field" id="topupIcField">
-        <label>No. IC (Kad Pengenalan)</label>
-        <input type="text" id="topupIc" placeholder="Contoh: 010203-12-1234"/>
-      </div>
-
-      <!-- PG Code — existing customers -->
-      <div class="field" id="topupPgField" style="display:none;">
+      <div class="field">
         <label>PG Code</label>
         <input type="text" id="topupPg" placeholder="Contoh: PG123456"/>
       </div>
 
-      <!-- Amount in RM -->
       <div class="field">
         <label>Jumlah Top Up (RM)</label>
         <input type="number" id="topupAmount" placeholder="Contoh: 300" min="1" step="1"/>
       </div>
 
-      <!-- Notes (optional) -->
-      <div class="field">
-        <label>Nota Tambahan <span style="color:var(--muted);font-size:11px;">(pilihan)</span></label>
-        <input type="text" id="topupNote" placeholder="Contoh: GAP sahaja"/>
-      </div>
-
-      <button class="btn-gold" onclick="submitTopUp()">📲 Hantar ke WhatsApp →</button>
+      <button class="btn-gold" onclick="submitTopUp()">📲 Hantar ke WASA →</button>
 
       <div class="topup-disclaimer">
-        Butang di atas akan membuka WhatsApp dengan mesej yang telah diisi. Sila semak sebelum menghantar.
+        Mesej akan dihantar ke WASA untuk diproses. Jumlah BND akan dikira oleh WASA dan dimaklumkan kepada anda.
       </div>
     </div>
-
   </div>
 
 </div>
