@@ -2193,6 +2193,11 @@ function floor2(num){
       title: 'Target Gram',
       desc: 'Tab ketiga membantu anda <b>merancang matlamat simpanan</b>. Pilih tujuan anda, masukkan jumlah sasaran, dan lihat berapa gram yang diperlukan.'
     },
+    {
+      icon: '📲',
+      title: 'Top Up Akaun',
+      desc: 'Tab ini membantu anda <b>menghantar permintaan top up</b> terus ke WASA melalui WhatsApp. Isi nama, PG Code, dan jumlah — mesej akan diisi secara automatik untuk anda.'
+    },
   ];
 
   let wtStep = 0;
@@ -2355,8 +2360,9 @@ function floor2(num){
       document.getElementById('topupSave').checked = true;
     }
 
-    // Show walkthrough on first visit
+    // Show walkthrough on first visit (including topup link visitors)
     if (!localStorage.getItem('wtSeen')) {
+      wtStep = 0;
       wtShow();
     }
   });
@@ -2432,6 +2438,7 @@ function floor2(num){
       <div class="wt-dot" id="wtDot1"></div>
       <div class="wt-dot" id="wtDot2"></div>
       <div class="wt-dot" id="wtDot3"></div>
+      <div class="wt-dot" id="wtDot4"></div>
     </div>
 
     <div class="wt-icon" id="wtIcon">💰</div>
@@ -2442,7 +2449,7 @@ function floor2(num){
       <button class="wt-btn-back" id="wtBack" onclick="wtPrev()" style="display:none;">← Balik</button>
       <button class="wt-btn-next" id="wtNext" onclick="wtNext()">Seterusnya →</button>
     </div>
-    <button class="wt-skip" onclick="wtClose()">Langkau</button>
+    <button class="wt-skip" onclick="wtClose()">Tutup</button>
   </div>
 </div>
 
