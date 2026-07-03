@@ -1812,10 +1812,10 @@ function floor2(num){
     const estGram = (parseFloat(amount) / gapPrice).toFixed(4);
 
     let msg = `Assalamu'alaikum/Hi! Boleh tolong direct top up akaun emas GAP.\n\n`;
-    msg += `👤 Nama: ${name}\n`;
-    msg += `🔑 ${identifier}\n`;
+    msg += `Nama: ${name}\n`;
+    msg += `${identifier}\n`;
     msg += `💰 Jumlah Top Up: RM ${parseFloat(amount).toLocaleString('en-MY')}\n`;
-    if (note) msg += `📝 Nota: ${note}\n`;
+    if (note) msg += `📝 Note: ${note}\n`;
     msg += `\nTerima kasih! 🙏`;
 
     const waUrl = `https://wa.me/6737404040?text=${encodeURIComponent(msg)}`;
