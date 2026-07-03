@@ -889,7 +889,7 @@
       margin-bottom: 7px;
     }
 
-    .ef-months { display: flex; gap: 8px; }
+    .ef-months { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 
     .ef-month-btn {
       flex: 1;
@@ -1340,8 +1340,14 @@
           <label>Bilangan bulan</label>
           <div class="ef-months">
             <button class="ef-month-btn active" onclick="setEFMonths(this, 3)">3 bulan</button>
-            <button class="ef-month-btn" onclick="setEFMonths(this, 4)">4 bulan</button>
             <button class="ef-month-btn" onclick="setEFMonths(this, 6)">6 bulan</button>
+            <button class="ef-month-btn" onclick="setEFMonths(this, 12)">12 bulan</button>
+            <button class="ef-month-btn" id="efBtnCustom" onclick="setEFMonths(this, 0)">Custom</button>
+          </div>
+          <div id="efCustomField" style="display:none;margin-top:10px;">
+            <input type="number" id="efCustomMonths" placeholder="Masukkan bilangan bulan" min="1" step="1"
+              style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:16px;font-family:'Outfit',sans-serif;color:var(--text);outline:none;box-sizing:border-box;"
+              oninput="calcEF()"/>
           </div>
         </div>
         <div class="ef-result" id="efResult" style="display:none;">
@@ -1859,9 +1865,9 @@ function floor2(num){
   // TARGET GRAM CALCULATOR
   // ══════════════════════════════
   const GOALS = {
-    kecemasan: { title: 'Dana Kecemasan', icon: '🆘', desc: 'Wang tunai dalam bank boleh susut nilainya akibat inflasi. Emas mengekalkan kuasa beli anda — RM yang anda simpan dalam emas hari ini bernilai lebih pada masa hadapan. Dana kecemasan dalam emas memberi anda ketenangan dan perlindungan nilai serentak.' },
-    pendidikan: { title: 'Pendidikan Anak', icon: '🎓', desc: 'Kos pendidikan meningkat setiap tahun. Wang dalam akaun biasa tidak cukup untuk kejar inflasi pendidikan. Emas tumbuh mengikut nilai pasaran dunia — simpan emas sekarang, dan apabila anak anda bersedia untuk universiti, nilainya sudah jauh lebih tinggi.' },
-    haji:       { title: 'Haji & Umrah', icon: '🕌', desc: 'Persediaan untuk Haji dan Umrah memerlukan bertahun-tahun. Simpan dalam emas agar nilai tidak susut semasa menunggu. Emas juga lebih selamat dari turun naik mata wang — kos pakej dalam USD atau SAR tidak akan terasa berat jika anda simpan dalam emas.' },
+    kecemasan: { title: 'Dana Kecemasan', icon: '🆘', desc: 'Wang tunai dalam bank boleh susut nilainya akibat inflasi. Emas mengekalkan kuasa beli anda — nilai simpanan emas hari ini lebih kukuh berbanding wang tunai pada masa hadapan. Dana kecemasan dalam emas memberi anda ketenangan dan perlindungan nilai serentak.' },
+    pendidikan: { title: 'Pendidikan Anak', icon: '🎓', desc: 'Kos pendidikan meningkat setiap tahun. Simpanan biasa tidak cukup untuk kejar inflasi pendidikan. Emas tumbuh mengikut nilai pasaran dunia — simpan emas sekarang, dan apabila anak anda bersedia untuk universiti, nilainya sudah jauh lebih tinggi.' },
+    haji:       { title: 'Haji & Umrah', icon: '🕌', desc: 'Persediaan untuk Haji dan Umrah memerlukan bertahun-tahun. Simpan dalam emas agar nilai tidak susut semasa menunggu. Emas juga lebih selamat dari turun naik mata wang — kos pakej tidak akan terasa berat jika anda simpan dalam emas dari awal.' },
     rumah:      { title: 'Deposit Rumah', icon: '🏠', desc: 'Deposit rumah memerlukan disiplin tinggi. Emas membantu anda kekalkan nilai simpanan dari terhakis inflasi. Simpan sedikit setiap bulan dalam emas — apabila cukup, tukar kepada wang tunai untuk deposit. Nilai emas berkemungkinan lebih tinggi dari semasa anda mula simpan.' },
     kahwin:     { title: 'Majlis Perkahwinan', icon: '💒', desc: 'Kos perkahwinan semakin mahal. Simpan dalam emas untuk elak bebanan hutang. Berbanding simpan wang tunai yang nilai susut, emas membantu anda capai sasaran majlis impian tanpa perlu pinjam. Rancang awal, simpan konsisten, sambut majlis tanpa tekanan.' },
     pencen:     { title: 'Pencen & Bebas Kewangan', icon: '🌴', desc: 'Persaraan yang tenang memerlukan aset yang kekal nilainya. Emas terbukti mengekalkan nilai sepanjang zaman — lebih kukuh dari wang kertas. Simpan emas secara konsisten sekarang, dan nikmati kebebasan kewangan apabila tiba masanya untuk berehat.' },
@@ -1899,22 +1905,35 @@ function floor2(num){
     efMonths = months;
     document.querySelectorAll('.ef-month-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    calcEF();
+    document.getElementById('efCustomField').style.display = months === 0 ? 'block' : 'none';
+    if (months === 0) {
+      document.getElementById('efCustomMonths').value = '';
+      document.getElementById('efResult').style.display = 'none';
+    } else {
+      calcEF();
+    }
   }
 
   function calcEF() {
     const salary = parseFloat(document.getElementById('efSalary').value);
-    if (!salary || salary <= 0) { document.getElementById('efResult').style.display = 'none'; return; }
-    const total = salary * efMonths;
+    const isCustom = efMonths === 0;
+    const months = isCustom ? parseInt(document.getElementById('efCustomMonths').value) : efMonths;
+    if (!salary || salary <= 0 || !months || months <= 0) {
+      document.getElementById('efResult').style.display = 'none';
+      return;
+    }
+    const total = salary * months;
     document.getElementById('efResultVal').textContent = '$ ' + total.toLocaleString('en-BN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    document.getElementById('efResultSub').textContent = `BND $${salary.toLocaleString('en-BN')} × ${efMonths} bulan`;
+    document.getElementById('efResultSub').textContent = `$ ${salary.toLocaleString('en-BN')} × ${months} bulan`;
     document.getElementById('efResult').style.display = 'block';
   }
 
   function useEFResult() {
     const salary = parseFloat(document.getElementById('efSalary').value);
-    if (!salary) return;
-    const total = Math.ceil(salary * efMonths);
+    const isCustom = efMonths === 0;
+    const months = isCustom ? parseInt(document.getElementById('efCustomMonths').value) : efMonths;
+    if (!salary || !months) return;
+    const total = Math.ceil(salary * months);
     document.getElementById('targetBndInput').value = total;
     document.getElementById('targetBndInput').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     calcTargetGram();
@@ -1989,8 +2008,6 @@ function floor2(num){
     document.getElementById('efResult').style.display = 'none';
     clearGoals();
   }
-  }
-
 
   // ══════════════════════════════
   // TOP UP
