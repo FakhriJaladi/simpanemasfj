@@ -922,6 +922,38 @@
       color: var(--muted);
       font-size: 14px;
     }
+    /* ── TOP UP PAGE ── */
+    .topup-wrap {
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .topup-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 16px;
+    }
+
+    .topup-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .topup-disclaimer {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.7;
+    }
+
     /* ── FLOATING SOCIAL BAR ── */
     .social-bar {
       position: fixed;
@@ -987,6 +1019,7 @@
   <button class="nav-btn active" onclick="showPage('prices', this)">💰 Harga Emas</button>
   <button class="nav-btn" onclick="showPage('calc', this)">🧮 Kalkulator</button>
   <button class="nav-btn" onclick="showPage('target', this)">🎯 Target Gram</button>
+  <button class="nav-btn" id="navTopUp" onclick="showPage('topup', this)" style="display:none;">📲 Top Up</button>
   <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Tukar tema">🌙</button>
 </nav>
 
@@ -1747,6 +1780,50 @@ function floor2(num){
 
 
   // ══════════════════════════════
+  // TOP UP
+  // ══════════════════════════════
+  let customerType = 'new';
+
+  function setCustomerType(type) {
+    customerType = type;
+    document.getElementById('btnNew').classList.toggle('active', type === 'new');
+    document.getElementById('btnExisting').classList.toggle('active', type === 'existing');
+    document.getElementById('topupIcField').style.display = type === 'new' ? 'block' : 'none';
+    document.getElementById('topupPgField').style.display = type === 'existing' ? 'block' : 'none';
+  }
+
+  function submitTopUp() {
+    const name = document.getElementById('topupName').value.trim();
+    const amount = document.getElementById('topupAmount').value.trim();
+    const ic = document.getElementById('topupIc').value.trim();
+    const pg = document.getElementById('topupPg').value.trim();
+    const note = document.getElementById('topupNote').value.trim();
+
+    if (!name) { alert('Sila masukkan nama penuh anda.'); return; }
+    if (!amount || parseFloat(amount) <= 0) { alert('Sila masukkan jumlah top up yang sah.'); return; }
+    if (customerType === 'new' && !ic) { alert('Sila masukkan No. IC anda.'); return; }
+    if (customerType === 'existing' && !pg) { alert('Sila masukkan PG Code anda.'); return; }
+
+    const identifier = customerType === 'new'
+      ? `No. IC: ${ic}`
+      : `PG Code: ${pg}`;
+
+    const gapPrice = PG_DATA.pricePerGram.sell;
+    const estGram = (parseFloat(amount) / gapPrice).toFixed(4);
+
+    let msg = `Assalamualaikum Fakhri! Saya ingin membuat top up akaun emas GAP saya.\n\n`;
+    msg += `👤 Nama: ${name}\n`;
+    msg += `🔑 ${identifier}\n`;
+    msg += `💰 Jumlah Top Up: RM ${parseFloat(amount).toLocaleString('en-MY')}\n`;
+    msg += `📊 Anggaran Gram: ~${estGram}g\n`;
+    if (note) msg += `📝 Nota: ${note}\n`;
+    msg += `\nSila bantu proses top up saya. Terima kasih! 🙏`;
+
+    const waUrl = `https://wa.me/6737404040?text=${encodeURIComponent(msg)}`;
+    window.open(waUrl, '_blank');
+  }
+
+  // ══════════════════════════════
   // THEME TOGGLE
   // ══════════════════════════════
   function toggleTheme() {
@@ -1836,11 +1913,81 @@ function floor2(num){
     loadLivePrices().finally(() => startAutoRefresh());
   }
 
+  // Show Top Up tab only if URL contains ?topup=1
+  if (new URLSearchParams(window.location.search).get('topup') === '1') {
+    document.getElementById('navTopUp').style.display = '';
+  }
+
   // Show countdown straight away with fallback data, refresh properly after fetch
   updateCountdownDisplay();
   countdownTimer = setInterval(updateCountdownDisplay, 1000);
   loadLivePrices().finally(() => startAutoRefresh());
 </script>
+<!-- ════════════════════════════════════════════
+     PAGE 4 — TOP UP
+════════════════════════════════════════════ -->
+<div class="page" id="page-topup">
+
+  <div class="header">
+    <div class="tag">Simpan Emas Fakhri Jaladi</div>
+    <h1>Top Up<br/><em>Akaun Emas</em></h1>
+  </div>
+
+  <div class="topup-wrap">
+
+    <div class="topup-card">
+      <div class="topup-card-title">📋 Maklumat Top Up</div>
+
+      <!-- Customer type toggle -->
+      <div class="field">
+        <label>Jenis Pelanggan</label>
+        <div class="currency-toggle">
+          <button class="currency-btn active" id="btnNew" onclick="setCustomerType('new')">🆕 Pelanggan Baru</button>
+          <button class="currency-btn" id="btnExisting" onclick="setCustomerType('existing')">✅ Pelanggan Sedia Ada</button>
+        </div>
+      </div>
+
+      <!-- Name -->
+      <div class="field">
+        <label>Nama Penuh</label>
+        <input type="text" id="topupName" placeholder="Contoh: Ahmad bin Ali"/>
+      </div>
+
+      <!-- IC — new customers only -->
+      <div class="field" id="topupIcField">
+        <label>No. IC (Kad Pengenalan)</label>
+        <input type="text" id="topupIc" placeholder="Contoh: 010203-12-1234"/>
+      </div>
+
+      <!-- PG Code — existing customers -->
+      <div class="field" id="topupPgField" style="display:none;">
+        <label>PG Code</label>
+        <input type="text" id="topupPg" placeholder="Contoh: PG123456"/>
+      </div>
+
+      <!-- Amount in RM -->
+      <div class="field">
+        <label>Jumlah Top Up (RM)</label>
+        <input type="number" id="topupAmount" placeholder="Contoh: 300" min="1" step="1"/>
+      </div>
+
+      <!-- Notes (optional) -->
+      <div class="field">
+        <label>Nota Tambahan <span style="color:var(--muted);font-size:11px;">(pilihan)</span></label>
+        <input type="text" id="topupNote" placeholder="Contoh: GAP sahaja"/>
+      </div>
+
+      <button class="btn-gold" onclick="submitTopUp()">📲 Hantar ke WhatsApp →</button>
+
+      <div class="topup-disclaimer">
+        Butang di atas akan membuka WhatsApp dengan mesej yang telah diisi. Sila semak sebelum menghantar.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
 <!-- ── FLOATING SOCIAL BAR ── -->
 <div class="social-bar">
   <a class="social-btn wa" href="https://wa.me/6737315455" target="_blank" rel="noopener">
