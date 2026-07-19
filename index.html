@@ -2337,7 +2337,7 @@ function floor2(num){
 
     if (!name) { alert('Sila masukkan nama penuh anda.'); return; }
     if (topupType === 'existing' && !pg) { alert('Sila masukkan PG Code anda.'); return; }
-    if (topupType === 'first' && !ic) { alert('Sila masukkan No. IC / Pasport anda.'); return; }
+    if (topupType === 'first' && !ic) { alert('Sila masukkan No. IC / Passport anda.'); return; }
     if (!amount || parseFloat(amount) <= 0) { alert('Sila masukkan jumlah top up yang sah.'); return; }
 
     // Save or clear details based on checkbox
@@ -2348,7 +2348,7 @@ function floor2(num){
     }
 
     const identifier = topupType === 'first'
-      ? `No. IC / Pasport: ${ic}`
+      ? `No. IC / Passport: ${ic}`
       : `PG Code: ${pg}`;
 
     let msg = `Assalamualaikum/Hi, boleh tolong top up akaun GAP saya.\n\n`;
@@ -2700,7 +2700,7 @@ function floor2(num){
 
       <!-- IC/Passport — new customers -->
       <div class="field" id="topupIcField" style="display:none;">
-        <label>No. IC / Pasport</label>
+        <label>No. IC / Passport</label>
         <input type="text" id="topupIc" placeholder="Contoh: 01234567"/>
       </div>
 
@@ -2723,7 +2723,7 @@ function floor2(num){
         <div style="font-size:20px;flex-shrink:0;">⚠️</div>
         <div style="font-size:12px;color:var(--muted);line-height:1.7;">
           <b style="color:var(--gold-dim);display:block;margin-bottom:4px;">Perhatian</b>
-          WASA hanya menerima remittance melalui <b style="color:var(--text);">bank BIBD</b> sahaja. Sebagai alternatif, anda juga boleh menggunakan <b style="color:var(--text);">CDM</b>.
+          WASA hanya menerima pembayaran melalui <b style="color:var(--text);">bank BIBD</b> sahaja. Sebagai alternatif, anda juga boleh menggunakan <b style="color:var(--text);">CDM</b>.
         </div>
       </div>
 
